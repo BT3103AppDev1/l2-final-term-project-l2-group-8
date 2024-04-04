@@ -1,21 +1,20 @@
 <template>
-  <div>
-    <!-- Other content -->
+  <router-view />
+  <!-- <div>
     <AddBudget />
-    <!-- <AddBudget1 /> -->
-  </div>
+  </div> -->
 </template>
 
 <script>
-import AddBudget from './components/AddBudget.vue';
+// import AddBudget from './components/AddBudget.vue';
 // import AddBudget1 from './components/AddBudget1.vue';
 
 export default {
   name: 'App',
-  components: {
-    AddBudget,
-    // AddBudget1
-  },
+  // components: {
+  //   AddBudget,
+  //   // AddBudget1
+  // },
 }
 </script>
 

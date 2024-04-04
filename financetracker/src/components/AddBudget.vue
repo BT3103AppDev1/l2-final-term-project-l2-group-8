@@ -28,11 +28,15 @@
 
 <script>
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+// import { doc, setDoc } from "firebase/firestore";
 import firebaseApp from '../firebase.js';
+// import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
+    name:"AddBudget",
     data() {
         return {
+            // user: false,
             showModal: false,
             selectedCategory: '',
             newCategory: '',
@@ -56,6 +60,15 @@ export default {
             ]
         };
     },
+    // mounted() {
+    //     const auth = getAuth();
+    //     onAuthStateChanged(auth, (user) => {
+    //         if (user) {
+    //             this.user = user;
+    //             //this.useremail = user.email;
+    //         }
+    //     })
+    // },
     methods: {
         async addBudget() {
             // Validate input
@@ -74,11 +87,12 @@ export default {
                     amount: this.amount,
                 });
 
-                // Optionally refresh the page
-                location.reload();
+                // Refresh the page
+                // location.reload();
 
                 // Close modal
                 this.closeModal();
+                this.$emit("added");
             } catch (error) {
                 console.error('Error adding budget: ', error);
             }
@@ -139,7 +153,6 @@ label {
 label[for="amount"] {
     margin-left: 1.2em;
     margin-right: 1.5em;
-    /* Adjust margin-right as needed */
 }
 
 select,
