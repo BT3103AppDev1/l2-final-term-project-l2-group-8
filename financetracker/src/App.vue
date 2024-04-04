@@ -2,16 +2,19 @@
   <div>
     <!-- Other content -->
     <AddBudget />
+    <!-- <AddBudget1 /> -->
   </div>
 </template>
 
 <script>
 import AddBudget from './components/AddBudget.vue';
+// import AddBudget1 from './components/AddBudget1.vue';
 
 export default {
   name: 'App',
   components: {
     AddBudget,
+    // AddBudget1
   },
 }
 </script>

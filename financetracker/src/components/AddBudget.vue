@@ -1,10 +1,11 @@
 <template>
     <div>
-        <!-- Your modal content here -->
-        <button id= "createBudget" @click="showModal = true">Add Budget</button>
+        <!--  modal content  -->
+        <button id="createBudget" @click="showModal = true">Add Budget</button>
         <div v-if="showModal" class="modal">
-            <div class="modal-content">
-                <span @click="closeModal" class="close">&times;</span>
+
+            <form class="modal-content">
+                <span @click="closeModal" class="close">&times;</span><br>
                 <!-- <h3>Add Budget</h3> -->
                 <label for="category">Category:</label>
                 <select v-model="selectedCategory">
@@ -13,13 +14,14 @@
                     <option value="new">Add a new budget category</option>
                 </select>
                 <div v-if="selectedCategory === 'new'" id="newCategory">
-                    <label for="newCategory">New Category Name:</label>
+                    <label for="newCategory">New Category:</label>
                     <input type="text" v-model="newCategory" placeholder="Enter new category name">
                 </div><br><br>
                 <label for="amount">Amount:</label>
                 <input type="number" v-model="amount" min="0" max="1000000"><br><br>
-                <button @click="addBudget" >Add</button>
-            </div>
+                <button id="addBudget" @click="addBudget">Add</button>
+            </form>
+
         </div>
     </div>
 </template>
@@ -36,8 +38,20 @@ export default {
             newCategory: '',
             amount: null,
             categories: [
+                // default categories
                 { id: 'food', name: 'Food' },
                 { id: 'transportation', name: 'Transportation' },
+                { id: 'utilities', name: 'Utilities'},
+                { id: 'housing', name: 'Housing'},
+                { id: 'fashion', name: "Fashion"},
+                { id: 'entertainment', name: "Entertainment" },
+                { id: 'communication', name: "Communication" },
+                { id: 'gifts', name: "Gifts" },
+                { id: 'health', name: "Health" },
+                { id: 'pets', name: "Pets" },
+                { id: 'grocery', name: "Grocery" },
+                { id: 'education', name: "Education" },
+                { id: 'others', name: "Others" },
                 // Add more default categories as needed
             ]
         };
@@ -94,8 +108,10 @@ export default {
 .modal-content {
     max-width: 400px;
     margin: 0 auto;
-    display: inline-block;
-    text-align: left;
+    display:inline-block;
+    text-align: center;
+    align-items:center;
+    /* margin: auto; */
 }
 
 .close {
@@ -112,13 +128,18 @@ export default {
 
 label {
     display: inline-block;
-    margin-bottom: 5px;
+    /* margin-bottom: 0em; */
+    margin-right: 1em;
 }
 
 label {
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
     text-align: center;
-    /* Align labels to the right */
+}
+label[for="amount"] {
+    margin-left: 1.2em;
+    margin-right: 1.5em;
+    /* Adjust margin-right as needed */
 }
 
 select,
@@ -148,8 +169,20 @@ button:hover {
     float: inline-end;
 }
 
+#addBudget {
+    display: block;
+    margin: 0 auto;
+}
+
 #newCategory {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    margin-top: 1em;
+}
+
+#newCategory label {
+    margin-right: 0em;
+    /* margin-bottom: 0; */
 }
 </style>
 
