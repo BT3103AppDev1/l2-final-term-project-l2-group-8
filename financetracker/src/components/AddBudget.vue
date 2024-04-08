@@ -82,7 +82,8 @@ export default {
 
             try {
                 // Add budget to Firestore
-                const docRef = await addDoc(collection(db, 'budgets'), {
+                const docRef = await addDoc(collection(db, 'user', 'budgets', 
+                String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
                     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
                     amount: this.amount,
                 });
