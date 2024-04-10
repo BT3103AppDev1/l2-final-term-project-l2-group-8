@@ -16,9 +16,14 @@
                 <div v-if="selectedCategory === 'new'" id="newCategory">
                     <label for="newCategory">New Category:</label>
                     <input type="text" v-model="newCategory" placeholder="Enter new category name">
+                    <!-- Warning message for new category -->
+                    <span v-if="newCategory && !isValidNewCategory" class="warning">New category name must be less than
+                        20 characters and contain only letters, numbers, and spaces.</span>
                 </div><br><br>
                 <label for="amount">Amount:</label>
-                <input type="number" v-model="amount" min="0" max="1000000"><br><br>
+                <input type="number" v-model="amount" min="0" max="1000000">
+                <span v-if="!isValidAmount" class="warning">Budget amount must be between 0 and
+                    1,000,000.</span><br><br>
                 <button id="addBudget" @click="addBudget">Add</button>
             </form>
 
@@ -69,6 +74,16 @@ export default {
     //         }
     //     })
     // },
+    computed: {
+        // Check if new category name is valid
+        isValidNewCategory() {
+            return !this.newCategory || (this.newCategory.length <= 20 && /^[a-zA-Z0-9 ]+$/.test(this.newCategory));
+        },
+        // Check if amount is valid
+        isValidAmount() {
+            return !this.amount || (this.amount >= 0 && this.amount <= 1000000);
+        }
+    },
     methods: {
         async addBudget() {
             // Validate input
@@ -214,6 +229,13 @@ button:hover {
 #newCategory label {
     margin-right: 0em;
     /* margin-bottom: 0; */
+}
+
+.warning {
+    color: red;
+    margin: 0 auto;
+    font-size: small;
+    display: inline-flex;
 }
 </style>
 
