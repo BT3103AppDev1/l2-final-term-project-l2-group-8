@@ -77,6 +77,23 @@ export default {
                 return;
             }
 
+            if (this.amount < 0 || this.amount > 1000000) {
+                alert("Budget amount is out of allowed range.")
+            }
+
+            if (this.selectedCategory === 'new') {
+                if (!this.newCategory) {
+                    alert('New budget category name cannot be empty.');
+                    return;
+                } else if (this.newCategory.length > 20) {
+                    alert('Budget category name exceeds the maximum symbol limit (20 characters).');
+                    return;
+                } else if (!/^[a-zA-Z0-9 ]+$/.test(this.newCategory)) {
+                    alert('Budget category cannot contain special characters.');
+                    return;
+                }
+            }
+
             // Initialize Firestore
             const db = getFirestore(firebaseApp);
 
