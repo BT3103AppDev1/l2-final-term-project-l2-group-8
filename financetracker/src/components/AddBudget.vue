@@ -35,7 +35,7 @@
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 // import { doc, setDoc } from "firebase/firestore";
 import firebaseApp from '../firebase.js';
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
     name:"AddBudget",
@@ -65,15 +65,16 @@ export default {
             ]
         };
     },
-    // mounted() {
-    //     const auth = getAuth();
-    //     onAuthStateChanged(auth, (user) => {
-    //         if (user) {
-    //             this.user = user;
-    //             //this.useremail = user.email;
-    //         }
-    //     })
-    // },
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.user = user;
+                this.userID = user.uid;
+                console.log(this.userID)
+            }
+        })
+    },
     computed: {
         // Check if new category name is valid
         isValidNewCategory() {
@@ -114,7 +115,7 @@ export default {
 
             try {
                 // Add budget to Firestore
-                const docRef = await addDoc(collection(db, 'user', 'budgets', 
+                const docRef = await addDoc(collection(db, String(this.userID), 'budgets', 
                 String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
                     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
                     amount: this.amount,

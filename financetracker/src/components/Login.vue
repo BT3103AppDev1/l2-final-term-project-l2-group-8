@@ -64,7 +64,8 @@ export default {
         var uiConfig = {
             signInSuccessUrl: '/home',
             signInOptions: [
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                // firebase.auth.EmailAuthProvider.PROVIDER_ID
             ]            
         };
         ui.start("#firebaseui-auth-container", uiConfig)    
@@ -76,13 +77,22 @@ export default {
         }
     },
     methods: {
+        
         login() {
             const auth = getAuth();
             if (!this.password || !this.email) {
                 alert("Please fill in all the requirements");
             } else {
-                signInWithEmailAndPassword(auth, this.email, this.password);
-                this.$router.push('/home');
+                signInWithEmailAndPassword(auth, this.email, this.password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    this.$router.push('/home');
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                });
             }
         }
     }
