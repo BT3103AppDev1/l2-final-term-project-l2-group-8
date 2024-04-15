@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "chart.js": "^4.4.2",
     "firebase": "^9.17.1",
     "firebaseui": "^6.1.0",
     "vue": "^3.4.21",
+    "vue-chartkick": "^1.1.0",
     "vue-router": "^4.3.0",
     "vuetify": "^3.4.0-beta.1"
   },
