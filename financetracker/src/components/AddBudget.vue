@@ -41,7 +41,8 @@ export default {
     name:"AddBudget",
     data() {
         return {
-            // user: false,
+            user: false,
+            userID: null,
             showModal: false,
             selectedCategory: '',
             newCategory: '',
