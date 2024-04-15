@@ -21,7 +21,8 @@
                         20 characters and contain only letters, numbers, and spaces.</span>
                 </div><br><br>
                 <label for="amount">Amount:</label>
-                <input type="number" v-model="amount" min="0" max="1000000">
+                <input type="text" v-model="amount" @input="formatAmount">
+                <!-- <input type="text" v-model="amount" min="0" max="1000000"> -->
                 <span v-if="!isValidAmount" class="warning">Budget amount must be between 0 and
                     1,000,000.</span><br><br>
                 <button id="addBudget" @click="addBudget">Add</button>
@@ -45,7 +46,7 @@ export default {
             showModal: false,
             selectedCategory: '',
             newCategory: '',
-            amount: null,
+            amount: '',
             categories: [
                 // default categories
                 { id: 'food', name: 'Food' },
@@ -82,7 +83,9 @@ export default {
         },
         // Check if amount is valid
         isValidAmount() {
-            return !this.amount || (this.amount >= 0 && this.amount <= 1000000);
+            const numAmount = parseFloat(this.amount);
+            return this.amount && !isNaN(numAmount) && numAmount >= 0 && numAmount <= 1000000;
+            // return !this.amount || (this.amount >= 0 && this.amount <= 1000000);
         }
     },
     methods: {
@@ -93,9 +96,15 @@ export default {
                 return;
             }
 
-            if (this.amount < 0 || this.amount > 1000000) {
-                alert("Budget amount is out of allowed range.")
+            const numAmount = parseFloat(this.amount);
+            if (isNaN(numAmount) || numAmount < 0 || numAmount > 1000000) {
+                alert("Budget amount is out of allowed range.");
+                return;
             }
+
+            // if (this.amount < 0 || this.amount > 1000000) {
+            //     alert("Budget amount is out of allowed range.")
+            // }
 
             if (this.selectedCategory === 'new') {
                 if (!this.newCategory) {
@@ -118,7 +127,7 @@ export default {
                 const docRef = await addDoc(collection(db, String(this.user.email), 'budgets', 
                 String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
                     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
-                    amount: this.amount,
+                    amount: numAmount/*this.amount*/,
                 });
 
                 // Refresh the page
@@ -135,8 +144,32 @@ export default {
             this.showModal = false;
             this.selectedCategory = '';
             this.newCategory = '';
-            this.amount = null;
-        }
+            this.amount = '';
+        },
+        formatAmount(event) {
+            // Get the current input value
+            let value = event.target.value;
+
+            // Replace any non-digit characters except the decimal point
+            value = value.replace(/[^0-9.]/g, '');
+
+            // Check if the input includes more than one decimal point
+            const decimalCheck = value.split('.');
+            if (decimalCheck.length > 2) {  // More than one decimal point
+                value = decimalCheck[0] + '.' + decimalCheck[1];
+            }
+
+            // Limit to two decimal places
+            if (decimalCheck.length > 1 && decimalCheck[1].length > 2) {
+                value = decimalCheck[0] + '.' + decimalCheck[1].substring(0, 2);
+            }
+
+            // Update the input field's value
+            event.target.value = value;
+
+            // Update the Vue model
+            this.amount = value;
+            }
     },
 };
 </script>
