@@ -41,7 +41,7 @@ export default {
     name:"AddBudget",
     data() {
         return {
-            // user: false,
+            user: false,
             showModal: false,
             selectedCategory: '',
             newCategory: '',
@@ -70,8 +70,8 @@ export default {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 this.user = user;
-                this.userID = user.uid;
-                console.log(this.userID)
+                // this.userID = user.uid;
+                // console.log(this.user.email)
             }
         })
     },
@@ -115,7 +115,7 @@ export default {
 
             try {
                 // Add budget to Firestore
-                const docRef = await addDoc(collection(db, String(this.userID), 'budgets', 
+                const docRef = await addDoc(collection(db, String(this.user.email), 'budgets', 
                 String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
                     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
                     amount: this.amount,
