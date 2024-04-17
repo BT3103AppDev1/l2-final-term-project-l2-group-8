@@ -1,85 +1,82 @@
 <template>
-    <div id="container">
-        <div id="add-a-post">
-            <input id="name" v-model="post.name" placeholder="Enter your name (optional)"><hr>
-            <input id="title" v-model="post.title" placeholder="Enter your title (optional)"><hr>
-            <input id="text" v-model="post.text" placeholder="Enter your text"><br>
-            <button @click="Post">Post</button>
+    <body>
+        <div id="container">
+            <div id="add-a-post">
+                <textarea id="name" v-model="post.name" placeholder="Enter your name (optional)"></textarea><hr>
+                <textarea id="title" v-model="post.title" placeholder="Enter your title (optional)"></textarea><hr>
+                <textarea id="text" v-model="post.text" placeholder="Enter your text"></textarea>
+                <button @click="upload">Post</button>
+            </div><br>
+            <div v-for="post in posts" class="view-posts">
+                <p><b>{{ post.title }}</b></p>
+                <p>{{ post.name }}</p>
+                <p>{{ post.text }}</p>
+            </div>
         </div>
-        <div id="view-posts">
-            <ul>
-                <li v-for="item in posts">{{ item }}</li>
-            </ul>
-        </div>
-        <LogOut/>
-    </div>
+    </body>
 </template>
 
 <script>
-import LogOut from '@/LogOut.vue';
 export default {
     name: 'Forum',
-    components: {
-        LogOut
-    },
     data() {
         return {
-            post: {
-                name: "",
-                title: "",
-                text: "",
-            },
+            post: {name: "", title: "",text: ""},
             posts: []            
         }
     },
+    created() {
+        this.posts = JSON.parse(localStorage.getItem('savedData')) || [];
+    },
     methods: {
-        Post() {
-            if (this.post.text == "") {
-                alert("Please input your message!");
-                return;
-            }
-            var message = "";
-            if (this.post.title != "") {
-                message += this.post.title + "\n";
-            }
-            if (this.post.name != "") {
-                message += "@" + this.post.name + "\n";
-            }
-            message += this.post.text;
-            this.posts.push(message);            
-            this.post = {
-                name: "",
-                title: "",
-                text: "",
-            }
+        upload() {
+            this.posts.push(this.post);
+            localStorage.setItem('savedData', JSON.stringify(this.posts));
+            this.post = {name: "", title:"", text:""};
         }
     }
 }
 </script>
 
 <style scoped>
-#containter {
-    text-align: center;
-    background-color: #ffffff;
-    width: 200px;
+body {
+    background: linear-gradient(to right top, #49eded, #95d52d);
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+#container {
+    margin: 30px;
+    width: 60%;
+    background-color: #ffffff77;
     border-radius: 20px;
 }
 #add-a-post {
+    margin: 20px;
+    background-color: #ffffff;
     text-align: center;
-    background-color: #dddddd;
-    width: 160px;
     border-radius: 20px;
+    padding: 10px;
 }
-input {
+textarea {
     border: none;
     outline: none;
-    height: 20px;
-    width: 160px;
-    border-radius: 20px;
-    padding: 5px;
+    background-color: #ffffff;
+    resize: none;
+    height: 30px;
+    width: 98%;
 }
 #text {
-    height: 160px;
+    height: 200px;
+}
+.view-posts {
+    margin: 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    display: inline-block;
+    padding: 10px;
 }
 button {
     background-color: #dddddd;
@@ -88,13 +85,14 @@ button {
     width: 80px;
     border-radius: 40px;
     font-size: 15px;
-    margin: 10px 0 0 0;
+    margin: 0 auto;
 }
-li {
-    display: block;
-    text-align: center;
-    background-color: #dddddd;
-    width: 160px;
-    border-radius: 20px;
+button:hover {
+    background-color: #aaaaaa;
+}
+p {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 </style>
