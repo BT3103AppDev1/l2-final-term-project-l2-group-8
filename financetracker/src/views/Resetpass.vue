@@ -1,62 +1,51 @@
 <template>
     <body>
         <div id="container">
-            <h1>Create an Account</h1><br>
+            <h1>Reset Password</h1><br>
             <form class="form">
                 <div class="form-item">
                     <span class="form-item-icon material-symbols-rounded">mail</span>
                     <input type="text" placeholder="Enter your email" v-model="email">
-                </div>
-                <div class="form-item">
-                    <span class="form-item-icon material-symbols-rounded">lock</span>
-                    <input type="password" placeholder="Enter your password" v-model="password">
                 </div><br>
                 <div class="form-item-other">
-                    <button @click="register">Register</button>
-                </div> 
-                <div class="form-item-other">
-                    <button @click="forgetPassword">Forget Password</button>
+                    <button @click="sendEmail">Send Email</button>
                 </div>
                 <div class="form-item-other">
-                    <button @click="logIn">User Log In</button>
-                </div>    
+                    <button @click="signIn">Back To Log In</button>
+                </div> 
+                <div class="form-item-other">
+                    <button @click="register">Create An Account</button>
+                </div>  
             </form>
         </div>
     </body>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import router from "@/router";
 
-// Initialize refs for email and password
-const email = ref('');
-const password = ref('');
-// Initialize Firebase Auth and Vue Router
+const email = ref("");
 const auth = getAuth();
-const router = useRouter();
 
-// Define the register function
-const register = async (event) => {
+const sendEmail = async (event) => {
     event.preventDefault();
     try {
-        // This will now only be called when the user clicks the "Register" button
-        const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-        const user = userCredential.user;
-        router.push('/forum');
+        await sendPasswordResetEmail(auth, email.value);
+        alert("Password reset email sent!")
     } catch (error) {
         alert(error.message);
         console.log(error.code);
     }
-};
-
-const forgetPassword = () => {
-    router.push("/resetpass");
 }
 
-const logIn = () => {
+const signIn = () => {
     router.push("/");
+};
+
+const register = () => {
+    router.push("/register");
 };
 </script>
 

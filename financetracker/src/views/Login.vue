@@ -14,9 +14,9 @@
                 <div class="form-item-other">
                     <button @click="signIn">Sign In</button>
                 </div> 
-                <!-- <div class="form-item-other">
-                    <button @click="signInWithGoogle">Sign In With Google</button>
-                </div> -->
+                <div class="form-item-other">
+                    <button @click="forgetPassword">Forget Password</button>
+                </div>
                 <div class="form-item-other">
                     <button @click="register">Create An Account</button>
                 </div>  
@@ -27,12 +27,7 @@
 
 <script setup>
 import { ref } from "vue";
-import {
-    getAuth, 
-    signInWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup
-} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import router from "@/router";
 
 // Initialize refs for email and password
@@ -61,19 +56,9 @@ const signIn = async (event) => {
     }
 };
 
-// Define the signInWithGoogle function (implementation depends on your setup)
-// const signInWithGoogle = async (event) => {
-//     event.preventDefault();
-//     try {
-//         const provider = new GoogleAuthProvider();
-//         const userCredential = await signInWithPopup(auth, provider);
-//         const user = userCredential.user;
-//         router.push("/forum");
-//     } catch (error) {
-//         alert(error.message);
-//         console.log(error.code);
-//     }
-// };
+const forgetPassword = () => {
+    router.push("/resetpass");
+}
 
 const register = () => {
     router.push("/register");
