@@ -124,11 +124,31 @@ export default {
 
             try {
                 // Add budget to Firestore
-                const docRef = await addDoc(collection(db, String(this.user.email), 'budgets', 
-                String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
-                    category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
-                    amount: numAmount/*this.amount*/,
-                });
+                // const docRef = await addDoc(collection(db, String(this.user.email), 'budgets', 
+                // String(this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory)), {
+                //     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
+                //     amount: numAmount/*this.amount*/,
+                // });
+
+                const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
+                const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+
+                // Constructing the full path dynamically without "time"
+                const budgetCollectionPath = [
+                    String(this.user.email), // Root collection by user email
+                    currentYearMonth,        // Directly use year-month as subcollection
+                    userCategory             // Specific category for the budget
+                ];
+
+                // Data to be added to Firestore
+                const budgetData = {
+                    amount: numAmount, // Replace 'numAmount' with your actual amount variable
+                    timestamp: new Date().getMonth() + 1 // Month as a number (1-12)
+                };
+
+                // Add the document to the correct Firestore path
+                const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
+
 
                 // Refresh the page
                 // location.reload();
