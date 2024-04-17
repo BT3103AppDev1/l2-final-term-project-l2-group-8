@@ -157,7 +157,6 @@ export default {
                 alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
-                this.resetForm();
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }
@@ -165,7 +164,13 @@ export default {
         
         closeModal() {
             this.showModal = false;
+            this.user = null;
+            this.selectedCategory = '';
+            this.newCategory = '';
+            this.amount= '';
+            this.title= ''
         },
+
         formatAmount(event) {
             // Get the current input value
             let value = event.target.value;

@@ -10,7 +10,7 @@ export default {
     name: 'App',
     components: {
         AddBudget,
-        AddExpense
+        AddExpense,
     },
     data() {
         return {
