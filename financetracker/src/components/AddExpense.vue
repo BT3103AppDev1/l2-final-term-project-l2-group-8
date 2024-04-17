@@ -51,8 +51,8 @@
 
 <script>
 import firebaseApp from '../firebase.js';
-import { getFirestore, collection, doc, setDoc, Timestamp } from 'firebase/firestore';
-import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
 export default {
@@ -87,7 +87,7 @@ export default {
     },
     mounted() {
         const auth = getAuth();
-        auth.onAuthStateChanged((user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 this.user = user;
             }
@@ -139,24 +139,22 @@ export default {
                 }
             }
 
-            alert(" Saving your expense for: " + this.title) 
+         
             try {
                 // Get the month from selectedTime
                 const selectedMonth = this.selectedTime.split('-')[1];
-                // Reference to the user's document
-                const userDocRef = doc(db, this.user.email);
-                // Reference to the month's document
-                const monthDocRef = doc(db, this.user.email, selectedMonth);
+                // Get the category
+                const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
                 // Reference to the category's document
-                const categoryDocRef = doc(db, this.user.email, selectedMonth, this.selectedCategory);
+                const categoryDocRef = [String(this.user.email), selectedMonth, userCategory];
                 // Add the expense to the category's expenses subcollection
-                await setDoc(doc(categoryDocRef, 'expenses', Timestamp.now()), {
+                await addDoc(collection(db, ...categoryDocRef), {
                     title: this.title,
                     amount: numAmount,
                     selectedTime: this.selectedTime
                 });
 
-                console.log("Document reference:", docRef);
+                alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
                 this.resetForm();
