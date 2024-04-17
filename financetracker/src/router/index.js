@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Forum from '../views/Forum.vue';
+import Resetpass from '@/views/Resetpass.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -20,11 +21,13 @@ const router = createRouter({
         path: "/forum",
         name: "forum",
         component: Forum
+      },
+      {
+        path: "/resetpass",
+        name: "resetpass",
+        component: Resetpass
       }
     ]
 })
 
 export default router;
-
-
-
