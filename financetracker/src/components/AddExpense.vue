@@ -86,6 +86,8 @@ export default {
         };
     },
     mounted() {
+        // Add event listener to close modal when clicking outside of it
+        document.body.addEventListener('click', this.handleClickOutside);
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -113,6 +115,16 @@ export default {
         }
     },
     methods: {
+        // Method to handle clicks outside the modal
+        handleClickOutside(event) {
+            const modal = document.querySelector('.modal');
+            const createExpenseButton = document.getElementById('createExpense');
+
+            // Check if the click target is outside the modal and not the button
+            if (!modal.contains(event.target) && event.target !== createExpenseButton) {
+                this.closeModal();
+            }
+        },
         async addExpense() {
             // Validate input
             if (!this.selectedCategory || !this.amount || !this.title || !this.selectedTime) {
@@ -164,7 +176,6 @@ export default {
         
         closeModal() {
             this.showModal = false;
-            this.user = null;
             this.selectedCategory = '';
             this.newCategory = '';
             this.amount= '';
@@ -194,8 +205,12 @@ export default {
 
             // Update the Vue model
             this.amount = value;
-            }
+        }
     },
+    beforeUnmount() {
+        // Remove event listener when component is unmounted
+        document.body.removeEventListener('click', this.handleClickOutside);
+    }
 };
 </script>
 
