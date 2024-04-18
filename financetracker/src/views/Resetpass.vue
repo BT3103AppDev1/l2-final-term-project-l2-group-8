@@ -53,15 +53,16 @@ const register = () => {
 body {
     background: linear-gradient(to right top, #49eded, #95d52d);
     background-size: cover;
-    min-height: 100vh;
+    min-height: 102vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
+    margin: -20px;
+    padding:0;
 }
 #container {
     width: 300px;
-    height: 300px;
+    height: 200px;
     padding: 100px;
     background-color: #ffffff77;
     border-radius: 10px;
@@ -111,13 +112,10 @@ button:hover {
 
 .footer {
     text-align: center;
-    /* display: flex; */
     position: absolute;
     left:0;
     right:0;
-    /* justify-content: space-between; */
-    /* padding: 0 1rem; */
-    margin-top: 9rem;
+    margin-top: 4rem;
 }
 
 #signIn,
@@ -127,11 +125,13 @@ button:hover {
     flex: 1;
     margin: 0 3.5rem;
     font-size: smaller;
+    text-decoration: underline;
+    color:gray
 }
 
 #signIn:hover,
 #register:hover{
-    color:rgb(17, 0, 255)
+    color:black
 }
 
 </style>
