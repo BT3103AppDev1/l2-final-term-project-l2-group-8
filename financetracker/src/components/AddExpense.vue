@@ -53,7 +53,6 @@
 import firebaseApp from '../firebase.js';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-const db = getFirestore(firebaseApp);
 
 export default {
     name:"AddExpense",
@@ -139,10 +138,11 @@ export default {
                 }
             }
 
+            const db = getFirestore(firebaseApp);
          
             try {
                 // Get the month from selectedTime
-                const selectedMonth = this.selectedTime.split('-')[1];
+                const selectedMonth = this.selectedTime.slice(0, 7);
                 // Get the category
                 const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
                 // Reference to the category's document
@@ -157,6 +157,7 @@ export default {
                 alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
+                this.$emit("added");
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }
@@ -164,7 +165,7 @@ export default {
         
         closeModal() {
             this.showModal = false;
-            this.user = null;
+
             this.selectedCategory = '';
             this.newCategory = '';
             this.amount= '';
