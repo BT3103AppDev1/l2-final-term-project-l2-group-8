@@ -1,4 +1,5 @@
 <template>
+
     <body>
         <div id="container">
             <h1>Reset Password</h1><br>
@@ -7,15 +8,13 @@
                     <span class="form-item-icon material-symbols-rounded">mail</span>
                     <input type="text" placeholder="Enter your email" v-model="email">
                 </div><br>
-                <div class="form-item-other">
+                <div class="form-item-button">
                     <button @click="sendEmail">Send Email</button>
                 </div>
-                <div class="form-item-other">
-                    <button @click="signIn">Back To Log In</button>
-                </div> 
-                <div class="form-item-other">
-                    <button @click="register">Create An Account</button>
-                </div>  
+                <div class="footer">
+                    <button id="signIn" @click="signIn">Back To Log In</button>
+                    <button id="register" @click="register">Create An Account</button>
+                </div>
             </form>
         </div>
     </body>
@@ -104,9 +103,35 @@ button {
     width: 200px;
     border-radius: 40px;
     font-size: 15px;
-    margin: 5px 0 0 0;
+    margin:5px 0 0 0;
 }
 button:hover {
     background-color: #aaaaaa;
 }
+
+.footer {
+    text-align: center;
+    /* display: flex; */
+    position: absolute;
+    left:0;
+    right:0;
+    /* justify-content: space-between; */
+    /* padding: 0 1rem; */
+    margin-top: 9rem;
+}
+
+#signIn,
+#register {
+    background: none;
+    width: 25%;
+    flex: 1;
+    margin: 0 3.5rem;
+    font-size: smaller;
+}
+
+#signIn:hover,
+#register:hover{
+    color:rgb(17, 0, 255)
+}
+
 </style>
