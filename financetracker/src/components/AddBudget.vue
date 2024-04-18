@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, setDoc,doc } from 'firebase/firestore';
 // import { doc, setDoc } from "firebase/firestore";
 import firebaseApp from '../firebase.js';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -129,26 +129,45 @@ export default {
                 //     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
                 //     amount: numAmount/*this.amount*/,
                 // });
+                console.log("adding")
+                // const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
+                // const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
 
-                const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
-                const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+                // // Constructing the full path dynamically without "time"
+                // const budgetCollectionPath = [
+                //     String(this.user.email), // Root collection by user email
+                //     currentYearMonth,        // Directly use year-month as subcollection
+                //     userCategory             // Specific category for the budget
+                // ];
 
-                // Constructing the full path dynamically without "time"
-                const budgetCollectionPath = [
-                    String(this.user.email), // Root collection by user email
-                    currentYearMonth,        // Directly use year-month as subcollection
-                    userCategory             // Specific category for the budget
-                ];
+                // // Data to be added to Firestore
+                // const budgetData = {
+                //     amount: numAmount, // Replace 'numAmount' with your actual amount variable
+                //     timestamp: new Date().getMonth() + 1 // Month as a number (1-12)
+                // };
 
-                // Data to be added to Firestore
+                // // Add the document to the correct Firestore path
+                // const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
+                const userEmail = this.user.email; // The user's email
+                const yearMonth = new Date().toISOString().slice(0, 7); // Current year and month, e.g., "2024-04"
+                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
+                const budgetAmount = numAmount; // The numerical budget amount
+                // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
+
+                // Path to the year-month document within the user's email collection
+                const yearMonthDocRef = doc(collection(db, userEmail), yearMonth);
+
+                // Path to the category subcollection within the year-month document
+                const categorySubcolRef = collection(yearMonthDocRef, categoryName);
+
+                // Prepare the budget data with the amount and timestamp
                 const budgetData = {
-                    amount: numAmount, // Replace 'numAmount' with your actual amount variable
-                    timestamp: new Date().getMonth() + 1 // Month as a number (1-12)
+                    amount: budgetAmount,
+                    timestamp: yearMonth // Assuming you want the full timestamp
                 };
 
-                // Add the document to the correct Firestore path
-                const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
-
+                // Add the budget document to the category subcollection
+                await setDoc(doc(categorySubcolRef, "budget"), budgetData);
 
                 // Refresh the page
                 // location.reload();

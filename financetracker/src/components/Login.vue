@@ -43,7 +43,7 @@
 
 <script>
 import firebase from '@/uifire.js';
-import 'firebase/compat/auth';
+// import 'firebase/compat/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
