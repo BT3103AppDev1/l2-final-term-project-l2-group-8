@@ -53,6 +53,7 @@
 import firebaseApp from '../firebase.js';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+const db = getFirestore(firebaseApp);
 
 export default {
     name:"AddExpense",
@@ -85,6 +86,8 @@ export default {
         };
     },
     mounted() {
+        // Add event listener to close modal when clicking outside of it
+        document.body.addEventListener('click', this.handleClickOutside);
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -112,6 +115,16 @@ export default {
         }
     },
     methods: {
+        // Method to handle clicks outside the modal
+        handleClickOutside(event) {
+            const modal = document.querySelector('.modal');
+            const createExpenseButton = document.getElementById('createExpense');
+
+            // Check if the click target is outside the modal and not the button
+            if (!modal.contains(event.target) && event.target !== createExpenseButton) {
+                this.closeModal();
+            }
+        },
         async addExpense() {
             // Validate input
             if (!this.selectedCategory || !this.amount || !this.title || !this.selectedTime) {
@@ -138,11 +151,10 @@ export default {
                 }
             }
 
-            const db = getFirestore(firebaseApp);
          
             try {
                 // Get the month from selectedTime
-                const selectedMonth = this.selectedTime.slice(0, 7);
+                const selectedMonth = this.selectedTime.split('-')[1];
                 // Get the category
                 const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
                 // Reference to the category's document
@@ -157,7 +169,6 @@ export default {
                 alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
-                this.$emit("added");
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }
@@ -165,7 +176,6 @@ export default {
         
         closeModal() {
             this.showModal = false;
-
             this.selectedCategory = '';
             this.newCategory = '';
             this.amount= '';
@@ -195,8 +205,12 @@ export default {
 
             // Update the Vue model
             this.amount = value;
-            }
+        }
     },
+    beforeUnmount() {
+        // Remove event listener when component is unmounted
+        document.body.removeEventListener('click', this.handleClickOutside);
+    }
 };
 </script>
 
