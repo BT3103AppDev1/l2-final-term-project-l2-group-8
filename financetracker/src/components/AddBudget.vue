@@ -43,7 +43,6 @@ export default {
     data() {
         return {
             user: false,
-            userID: null,
             showModal: false,
             selectedCategory: '',
             newCategory: '',
