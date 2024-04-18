@@ -1,16 +1,22 @@
 <template>
     <AddBudget @added="change" />
     <AddExpense @added="change"/>
+    <div>
+        <BarplotDisplay />
+    </div>
 </template>
 
 <script>
 import AddBudget from "../components/AddBudget.vue"
 import AddExpense from "../components/AddExpense.vue"
+import BarplotDisplay from '../components/BarplotDisplay.vue'
+
 export default {
     name: 'App',
     components: {
         AddBudget,
         AddExpense,
+        BarplotDisplay
     },
     data() {
         return {
