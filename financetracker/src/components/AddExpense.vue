@@ -48,13 +48,11 @@
         </div>
     </div>
 </template>
-
 <script>
 import firebaseApp from '../firebase.js';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const db = getFirestore(firebaseApp);
-
 export default {
     name:"AddExpense",
     data() {
@@ -86,6 +84,8 @@ export default {
         };
     },
     mounted() {
+        // Add event listener to close modal when clicking outside of it
+        document.body.addEventListener('click', this.handleClickOutside);
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -113,19 +113,26 @@ export default {
         }
     },
     methods: {
+        // Method to handle clicks outside the modal
+        handleClickOutside(event) {
+            const modal = document.querySelector('.modal');
+            const createExpenseButton = document.getElementById('createExpense');
+            // Check if the click target is outside the modal and not the button
+            if (!modal.contains(event.target) && event.target !== createExpenseButton) {
+                this.closeModal();
+            }
+        },
         async addExpense() {
             // Validate input
             if (!this.selectedCategory || !this.amount || !this.title || !this.selectedTime) {
                 alert('Please fill in all the above fields.');
                 return;
             }
-
             const numAmount = parseFloat(this.amount);
             if (isNaN(numAmount) || numAmount < 0 || numAmount > 1000000) {
                 alert("Expense amount is out of allowed range.");
                 return;
             }
-
             if (this.selectedCategory === 'new') {
                 if (!this.newCategory) {
                     alert('New category name cannot be empty.');
@@ -138,7 +145,6 @@ export default {
                     return;
                 }
             }
-
          
             try {
                 // Get the month from selectedTime
@@ -153,10 +159,9 @@ export default {
                     amount: numAmount,
                     selectedTime: this.selectedTime
                 });
-
                 alert(" Saving your expense for: " + this.title)
-
                 this.closeModal();
+                this.$emit("added");
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }
@@ -169,32 +174,30 @@ export default {
             this.amount= '';
             this.title= ''
         },
-
         formatAmount(event) {
             // Get the current input value
             let value = event.target.value;
-
             // Replace any non-digit characters except the decimal point
             value = value.replace(/[^0-9.]/g, '');
-
             // Check if the input includes more than one decimal point
             const decimalCheck = value.split('.');
             if (decimalCheck.length > 2) {  // More than one decimal point
                 value = decimalCheck[0] + '.' + decimalCheck[1];
             }
-
             // Limit to two decimal places
             if (decimalCheck.length > 1 && decimalCheck[1].length > 2) {
                 value = decimalCheck[0] + '.' + decimalCheck[1].substring(0, 2);
             }
-
             // Update the input field's value
             event.target.value = value;
-
             // Update the Vue model
             this.amount = value;
-            }
+        }
     },
+    beforeUnmount() {
+        // Remove event listener when component is unmounted
+        document.body.removeEventListener('click', this.handleClickOutside);
+    }
 };
 </script>
 
@@ -209,12 +212,10 @@ export default {
     padding: 20px;
     z-index: 1000; /* modal appears above other content */
 }
-
 .modal-content {
     width: 400px;
     margin: 0 auto;
 }
-
 .close {
     position: absolute;
     top: 8px;
@@ -222,19 +223,16 @@ export default {
     font-size: 20px;
     cursor: pointer;
 }
-
 .formli {
     display: flex;
     align-items: center;
     margin-bottom: 20px
 }
-
 .formli label {
     width:120px;
     text-align:right;
     margin-right:10px;
 }
-
 .formli select,
 .formli input[type="text"],
 .formli input[type="date"] {
@@ -242,11 +240,9 @@ export default {
     padding: 10px;
     font-size: 16px;
 }
-
 .save {
     text-align: center;
 }
-
 button {
     margin-top: 10px;
     padding: 10px 20px;
@@ -256,22 +252,18 @@ button {
     cursor: pointer;
     border-radius: 4px;
 }
-
 button:hover {
     background-color: #404040;
     color: white;
 }
-
 #createExpense {
     float: inline-end;
     margin-right: 20px;
 }
-
 #addExpense {
     display: block;
     margin: 0 auto;
 }
-
 .warning {
     color: red;
     font-size: small;
