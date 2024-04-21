@@ -1,7 +1,7 @@
 <template>
     <AddBudget @added="change" />
-    <AddExpense @added="change"/>
-    <DonutChartSummary />
+    <AddExpense @added="change" /><br><br>
+    <DonutChartSummary :key="refreshComp" />
 </template>
 
 <script>

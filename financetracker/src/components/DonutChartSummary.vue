@@ -4,14 +4,18 @@
             <div class="total-budget">Total Budget: ${{ totalBudget.toFixed(2) }}</div><br>
             <div class="total-expense">Total Expense: ${{ totalExpense.toFixed(2) }} </div>
         </div>
-            <pie-chart :donut="true" :data="chartData" legend="bottom" prefix="$" loading="Loading..." height="70vh"
-                :colors="['#e97451', '#f1f9ec', '#008080', '#bab86c', '#fff0f5', '#b0e0e6', '#f5f5dc'
+        <pie-chart :donut="true" :data="chartData" legend="bottom" prefix="$" loading="Loading..." height="70vh"
+            :colors="['#e97451', '#f1f9ec', '#008080', '#bab86c', '#fff0f5', '#b0e0e6', '#f5f5dc'
             , '#2a52be', '#bc987e', '#d8bfd8' ]" :library="{
             cutout: '65%',
             elements: { arc: { borderWidth: 0 } },
             plugins: { legend: { labels: { color: '#36454F '}}}
         }"></pie-chart>
+        <div class="balance-display">
+            <span>Balance: ${{ formattedBalance }}</span>
         </div>
+    </div>
+
 </template>
 
 <script>
@@ -24,13 +28,28 @@ const db = getFirestore(firebaseApp);
 
 export default {
     name: "DonutChartSummary",
+    props: ['key'],
+    watch: {
+        // Watch for changes in the key prop, which is the refreshComp from the parent
+        key(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                this.fetchChartData();
+            }
+        }
+    },
     data() {
         return {
             chartData: [], // Initialize chartData as an empty array
             user: null,
             totalBudget:0,
-            totalExpense:0
+            totalExpense:0,
+            balance: 0
         };
+    },
+    computed: {
+        formattedBalance() {
+            return (this.totalBudget-this.totalExpense).toFixed(2);
+        }
     },
     mounted() {
         const auth = getAuth();
@@ -88,7 +107,7 @@ export default {
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -10%);
+        transform: translate(-50%, -130%);
         text-align: center;
         width: 100%;
         font: bold;
@@ -103,5 +122,16 @@ export default {
         font-weight: bold;
         color: #d65940;
     }
+
+    .balance-display {
+        width: 50vw;
+        background-color: #3F704D;
+        color: #f1f9ec;
+        padding: 2vb 2vb;
+        border-radius: 20px;
+        font-size: 1.2em;
+        text-align: center;
+        margin: 5vh auto
+        }
         
 </style>
