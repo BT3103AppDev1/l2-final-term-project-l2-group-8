@@ -89,7 +89,8 @@ export default {
         }
     },
     methods: {
-        async addBudget() {
+        async addBudget(event) {
+            event.preventDefault();
             // Validate input
             if (!this.selectedCategory || !this.amount) {
                 alert('Please select a category and enter an amount.');
@@ -121,6 +122,17 @@ export default {
 
             // Initialize Firestore
             const db = getFirestore(firebaseApp);
+            const userEmail = this.user.email; 
+
+            // Data to be added to Firestore
+            const budgetData = {
+                Date: new Date().toISOString(), 
+                amount: numAmount,
+                budget: true, 
+                expense: false, 
+                expense_title: "", // left empty
+            };
+
 
             try {
                 // Add budget to Firestore
@@ -131,7 +143,7 @@ export default {
                 // });
                 console.log("adding")
                 // const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
-                // const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
 
                 // // Constructing the full path dynamically without "time"
                 // const budgetCollectionPath = [
@@ -148,26 +160,28 @@ export default {
 
                 // // Add the document to the correct Firestore path
                 // const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
-                const userEmail = this.user.email; // The user's email
-                const yearMonth = new Date().toISOString().slice(0, 7); // Current year and month, e.g., "2024-04"
-                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
-                const budgetAmount = numAmount; // The numerical budget amount
+                // const userEmail = this.user.email; // The user's email
+                // const yearMonth = new Date().toISOString().slice(0, 7); // Current year and month, e.g., "2024-04"
+                // const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
+                // const budgetAmount = numAmount; // The numerical budget amount
                 // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
 
                 // Path to the year-month document within the user's email collection
-                const yearMonthDocRef = doc(collection(db, userEmail), yearMonth);
+                // const yearMonthDocRef = doc(collection(db, userEmail), yearMonth);
 
                 // Path to the category subcollection within the year-month document
-                const categorySubcolRef = collection(yearMonthDocRef, categoryName);
+                // const categorySubcolRef = collection(yearMonthDocRef, categoryName);
 
                 // Prepare the budget data with the amount and timestamp
-                const budgetData = {
-                    amount: budgetAmount,
-                    timestamp: yearMonth // Assuming you want the full timestamp
-                };
+                // const budgetData = {
+                //     amount: budgetAmount,
+                //     timestamp: yearMonth // Assuming you want the full timestamp
+                // };
 
                 // Add the budget document to the category subcollection
-                await setDoc(doc(categorySubcolRef, "budget"), budgetData);
+                // await setDoc(doc(categorySubcolRef, "budget"), budgetData);
+                await setDoc(doc(db, userEmail, categoryName), budgetData);
+
 
                 // Refresh the page
                 // location.reload();
