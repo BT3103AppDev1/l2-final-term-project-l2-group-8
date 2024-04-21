@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, setDoc,doc } from 'firebase/firestore';
 // import { doc, setDoc } from "firebase/firestore";
 import firebaseApp from '../firebase.js';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -89,7 +89,8 @@ export default {
         }
     },
     methods: {
-        async addBudget() {
+        async addBudget(event) {
+            event.preventDefault();
             // Validate input
             if (!this.selectedCategory || !this.amount) {
                 alert('Please select a category and enter an amount.');
@@ -121,6 +122,17 @@ export default {
 
             // Initialize Firestore
             const db = getFirestore(firebaseApp);
+            const userEmail = this.user.email; 
+
+            // Data to be added to Firestore
+            const budgetData = {
+                Date: new Date().toISOString(), 
+                amount: numAmount,
+                budget: true, 
+                expense: false, 
+                expense_title: "", // left empty
+            };
+
 
             try {
                 // Add budget to Firestore
@@ -129,25 +141,46 @@ export default {
                 //     category: this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory,
                 //     amount: numAmount/*this.amount*/,
                 // });
+                console.log("adding")
+                // const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
+                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
 
-                const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
-                const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+                // // Constructing the full path dynamically without "time"
+                // const budgetCollectionPath = [
+                //     String(this.user.email), // Root collection by user email
+                //     currentYearMonth,        // Directly use year-month as subcollection
+                //     userCategory             // Specific category for the budget
+                // ];
 
-                // Constructing the full path dynamically without "time"
-                const budgetCollectionPath = [
-                    String(this.user.email), // Root collection by user email
-                    currentYearMonth,        // Directly use year-month as subcollection
-                    userCategory             // Specific category for the budget
-                ];
+                // // Data to be added to Firestore
+                // const budgetData = {
+                //     amount: numAmount, // Replace 'numAmount' with your actual amount variable
+                //     timestamp: new Date().getMonth() + 1 // Month as a number (1-12)
+                // };
 
-                // Data to be added to Firestore
-                const budgetData = {
-                    amount: numAmount, // Replace 'numAmount' with your actual amount variable
-                    timestamp: new Date().getMonth() + 1 // Month as a number (1-12)
-                };
+                // // Add the document to the correct Firestore path
+                // const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
+                // const userEmail = this.user.email; // The user's email
+                // const yearMonth = new Date().toISOString().slice(0, 7); // Current year and month, e.g., "2024-04"
+                // const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
+                // const budgetAmount = numAmount; // The numerical budget amount
+                // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
 
-                // Add the document to the correct Firestore path
-                const docRef = await addDoc(collection(db, ...budgetCollectionPath), budgetData);
+                // Path to the year-month document within the user's email collection
+                // const yearMonthDocRef = doc(collection(db, userEmail), yearMonth);
+
+                // Path to the category subcollection within the year-month document
+                // const categorySubcolRef = collection(yearMonthDocRef, categoryName);
+
+                // Prepare the budget data with the amount and timestamp
+                // const budgetData = {
+                //     amount: budgetAmount,
+                //     timestamp: yearMonth // Assuming you want the full timestamp
+                // };
+
+                // Add the budget document to the category subcollection
+                // await setDoc(doc(categorySubcolRef, "budget"), budgetData);
+                await setDoc(doc(db, userEmail, categoryName), budgetData);
 
 
                 // Refresh the page
