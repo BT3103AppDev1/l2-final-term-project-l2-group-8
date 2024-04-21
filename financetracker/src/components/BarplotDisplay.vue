@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-  </template>
+</template>
   
   <script>
   import firebaseApp from '../firebase.js';
@@ -29,18 +29,19 @@
       const categories = ref([]);
       const user = ref(null);
       const auth = getAuth();
-      onAuthStateChanged(auth, (userAuth) => {
-        if (userAuth) {
-            user.value = userAuth;
+      onAuthStateChanged(auth, (currentUser) => {
+        if (currentUser) {
+            user.value = currentUser;
         }
       });
       const fetchCategoryData = async () => {
-        if(!user.value) return;
+        if (!user.value) return;
         // Get the current year and month
         const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
         // Fetch data from Firebase
-        const q = query(collection(db, String(user.value.email), currentYearMonth), orderBy('totalExpenses', 'desc'));
+        const q = query(collection(db, String(user.email), currentYearMonth), orderBy('totalExpenses', 'desc'));
         const querySnapshot = await getDocs(q);
+        
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           const data = doc.data();
