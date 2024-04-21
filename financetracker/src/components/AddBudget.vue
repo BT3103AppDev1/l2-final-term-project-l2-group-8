@@ -9,6 +9,7 @@
                 <!-- <h3>Add Budget</h3> -->
                 <label for="category">Category:</label>
                 <select v-model="selectedCategory">
+                    <option disabled value = "" selected>Select a category</option>
                     <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
                     </option>
                     <option value="new">Add a new budget category</option>
@@ -21,7 +22,7 @@
                         20 characters and contain only letters, numbers, and spaces.</span>
                 </div><br><br>
                 <label for="amount">Amount:</label>
-                <input type="text" v-model="amount" @input="formatAmount">
+                <input type="text" v-model="amount" @input="formatAmount" placeholder="00.00">
                 <!-- <input type="text" v-model="amount" min="0" max="1000000"> -->
                 <span v-if="!isValidAmount" class="warning">Budget amount must be between 0 and
                     1,000,000.</span><br><br>
@@ -286,7 +287,7 @@ input[type="text"] {
 button {
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #ffffff;
+    background-color: #f1f9ec;
     color: black;
     border: none;
     cursor: pointer;
