@@ -115,11 +115,12 @@ export default {
         // Method to handle clicks outside the modal
         handleClickOutside(event) {
             const modal = document.querySelector('.modal');
-            const createExpenseButton = document.getElementById('createExpense');
-
-            // Check if the click target is outside the modal and not the button
-            if (!modal.contains(event.target) && event.target !== createExpenseButton) {
-                this.closeModal();
+            if (modal && !modal.contains(event.target)) {
+                const createExpenseButton = document.getElementById('createExpense');
+                // Check if the click target is outside the modal and not the button
+                if (event.target !== createExpenseButton) {
+                    this.closeModal();
+                }
             }
         },
 
@@ -170,6 +171,7 @@ export default {
                 alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
+                this.$emit("added");
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }

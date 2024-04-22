@@ -1,117 +1,238 @@
 <template>
-    <div>
-      <div v-for="(category, index) in categories" :key="index" class="category-row">
-        <div @click="handleClick(index)" class="category-name">
-          <span :class="{'icon-expanded': category.isExpanded}">▶</span>
-          {{ category.name }}
-        </div>
-        <canvas :id="'chart-' + index" class="category-chart"></canvas>
-        <div v-if="category.isExpanded" class="expense-table">
-          <div v-for="expense in category.expenses" :key="expense.id">
-            {{ expense.selectedTime }} - {{ expense.title }} - {{ expense.amount }}
-          </div>
-        </div>
+  <div>
+    <h3>Category</h3>
+    <!--loop the categories in the order of descending total expenses-->
+    <div v-for="category in sortedCategories" :key="category.name">
+      <div class="category-header">
+        <!--▶ category name: barplot-->
+        <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
+        <span>{{ category.name }}</span>
       </div>
+      <bar-chart v-if="category.chartData && category.chartData.datasets[0].data.length > 0" :data="category.chartData" :stacked="true" :horizontal="true" :options="chartOptions"></bar-chart>
+      <!--expense table below barchart-->
+      <table v-if="category.isExpanded" class="expenses-table">
+        <tr v-for="expense in category.expenses" :key="expense.id">
+          <!--table columns-->
+          <td>{{ expense.date }}</td>
+          <td>{{ expense.expense_title }}</td>
+          <td>{{ expense.amount }}</td>
+        </tr>
+      </table>
     </div>
+  </div>
 </template>
-  
-  <script>
-  import firebaseApp from '../firebase.js';
-  import { ref, onMounted } from 'vue';
-  import { Chart } from 'chart.js';
-  import { getFirestore, collection, getDocs, query, orderBy } from 'firebase/firestore';
-  import { getAuth, onAuthStateChanged } from "firebase/auth";
-  const db = getFirestore(firebaseApp);
-  
-  export default {
-    name:"BarplotDisplay",
-    setup() {
-      const categories = ref([]);
-      const user = ref(null);
-      const auth = getAuth();
-      onAuthStateChanged(auth, (currentUser) => {
-        if (currentUser) {
-            user.value = currentUser;
+
+<script>
+import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import firebaseApp from '../firebase.js';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import 'chartkick/chart.js'
+
+const db = getFirestore(firebaseApp);
+
+export default {
+  name:"BarplotDisplay",
+  //props: ['key'],
+  // watch: {
+  //     // Watch for changes in the key prop, which is the refreshComp from the parent
+  //     key(newValue, oldValue) {
+  //         if (newValue !== oldValue) {
+  //             this.fetchChartData();
+  //         }
+  //     }
+  // },
+  data() {
+    return {
+      //save a list of category objects constructed by fetchCategoryData()
+      categories: [],
+      //save the data to be displayed for each category
+      //chartData: [],
+      //use current month to filter out relevant data
+      currentMonth: new Date().getMonth() + 1,
+      chartOptions: {
+        //options
+      },
+      user:null,
+      value1: 0,
+      value2: 0,
+      //monthly data used to plot % barchart
+      monthlyBudget: 0,
+      monthlyExpense: 0
+    }
+  },
+  computed: {
+    //sort the categories in the order of descending total expenses
+    sortedCategories() {
+      return this.categories.sort((a, b) => b.totalExpense - a.totalExpense)
+    }
+  },
+  mounted() {
+    //initialise user
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        this.user = user;
+        //
+        const categoriesRef = collection(db, this.user.email)
+        //fetching all the docs from the user's collection
+        const snapshot = await getDocs(categoriesRef)
+        //iterate over each doc in the snapshot
+        for (const doc of snapshot.docs) {
+          this.categories.push(await this.fetchCategoryData(doc.id))
         }
-      });
-      const fetchCategoryData = async () => {
-        if (!user.value) return;
-        // Get the current year and month
-        const currentYearMonth = new Date().toISOString().slice(0, 7); // Format as 'YYYY-MM'
-        // Fetch data from Firebase
-        const q = query(collection(db, String(user.email), currentYearMonth), orderBy('totalExpenses', 'desc'));
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          const data = doc.data();
-          const totalExpenses = data.expenses.reduce((total, expense) => total + expense.amount, 0);
-          const value1 = (data.budget.amount - totalExpenses) / data.budget.amount * 100;
-          const value2 = totalExpenses / data.budget.amount * 100;
-          categories.value.push({
-            name: doc.id,
-            isExpanded: false,
-            expenses: data.expenses,
-            budget: data.budget,
-            barData: [value1, value2],
-          });
-        });
-      };
-  
-      const handleClick = (index) => {
-        categories.value[index].isExpanded = !categories.value[index].isExpanded;
-      };
-  
-      onMounted(async () => {
-        await fetchCategoryData();
-        categories.value.forEach((category, index) => {
-          const ctx = document.getElementById('chart-' + index);
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: ['Budget', 'Expenses'],
-              datasets: [
-                {
-                  data: category.barData,
-                  backgroundColor: ['white', 'black'],
-                },
-              ],
-            },
-            options: {
-              indexAxis: 'y',
-            },
-          });
-        });
-      });
-  
-      return {
-        categories,
-        handleClick,
-      };
+      }
+    })
+  },
+
+  methods: {
+    //
+    toggleExpand(category) {
+      category.isExpanded = !category.isExpanded;
     },
-  };
-  </script>
-  
+    async fetchCategoryData(category) {
+      try {
+        //reference build to this specific category
+        const docRef = doc(db, this.user.email, category);
+        //get all docs in this category
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          let expenses = [];
+          let monthlyBudget = 0;
+          const currentMonth = new Date().getMonth();
+          //const currentYear = new Date().getFullYear();
+          monthlyBudget = data.budget;
+
+          for (let key in data) {
+            if (key.startsWith('field_')) {
+              const expenseData = data[key];
+              const expenseMonth = expenseData.Date.slice(0, 7); // Get the month of the expense
+
+              if (expenseData.expense && expenseMonth === currentMonth) {
+                expenses.push({
+                  id: key,
+                  date: expenseData.Date,
+                  expense_title: expenseData.expense_title,
+                  amount: expenseData.amount
+                });
+                expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
+              }
+            }
+          }
+
+          const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+          const value1 = totalExpense / monthlyBudget * 100;
+          const value2 = (monthlyBudget - totalExpense) / monthlyBudget * 100;
+
+          return {
+            name: category,
+            isExpanded: false,
+            expenses,
+            totalExpense,
+            chartData: {
+              labels: ['Expenses', 'Remaining Budget'],
+              datasets: [{
+                data: [value1, value2],
+                backgroundColor: ['black', 'white']
+              }]
+            }
+          };
+        }  
+      } catch (error) {
+        console.error(`Error fetching data for category ${category}:`, error);
+      }
+    }
+
+    
+  }
+}
+</script>
+
 <style scoped>
-.category-row { 
-    display: flex;
-    align-items: center;
-}
-.category-name {
-    flex:1;
-}
-.category-chart {
-    flex:2;
+.category-header {
+  display: flex;
+  align-items: center;
 }
 .icon-expanded {
-    display: inline-block;
-    transform: rotate(90deg);
+  transform: rotate(90deg);
 }
-  
-.expense-table {
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: transparent;
+.expenses-table {
+  max-height: 200px;
+  overflow-y: auto;
 }
 </style>
-  
+
+// //fetch all the necessary data from one category
+    // async fetchChartData(category) {
+    //   //reference build to this specific category
+    //   const categoryRef = collection(db, this.user.email, category)
+    //   //get all docs in this category
+    //   const snapshot = await getDocs(categoryRef)
+    //   let expenses = [] //store list of expenses
+    //   let monthlyBudget = 0
+    //   //for each category
+    //   snapshot.forEach(doc => {
+    //     const data = doc.data();
+    //     const monthlyBudget = data.budget; //this is the budget for this category. that's all for budget
+    //     const monthlyExpense = 0;
+    //     //for each field of expenses
+    //     for (let key in doc.data()) {
+    //       if (key.startsWith('field_')) {
+    //         const expenseData = doc.data()[key];//inner value of each expense field
+    //         const docDate = new Date(expenseData.Date);
+    //         //filter out this month's expenses
+    //         if (expenseData.expense && docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
+    //           let amount = parseFloat(expenseData.amount);
+    //           monthlyExpense += amount; //add to total expense
+    //           expenses.push({ //push into expense table
+    //             id: key,
+    //             date: expenseData.Date, 
+    //             expense_title: expenseData.expense_title, 
+    //             amount: expenseData.amount
+    //           })
+    //           value1 = (monthlyBudget - totalExpense) / monthlyBudget * 100
+    //           value2 = totalExpense / monthlyBudget * 100
+    //           return {
+    //             name: category,
+    //             isExpanded: false,
+    //             expenses,
+    //             totalExpense,
+    //             chartData: {
+    //             labels: ['Remaining Budget', 'Expenses'],
+    //             datasets: [{
+    //             data: [value1, value2],
+    //             backgroundColor: ['black', 'white']
+    //           }]
+    //     }
+    //   }
+    // },
+                  //               let category = doc.id;
+                  //               if (!categoryAmounts[category]) {
+                  //                   categoryAmounts[category] = 0;
+                  //               }
+                  //               categoryAmounts[category] += amount;
+                  //           }
+                  //       }
+                  //   }
+    // data() {
+    // return {
+    //   chartData: {
+    //     'Category A': [30, 70],
+    //     'Category B': [80, 20]
+    //   }
+    // };
+
+      //   if (data.expense && data.Date.slice(0, 7) === this.currentMonth) {
+      //     expenses.push({
+      //       id: doc.id,
+      //       date: data.Date,
+      //       expense_title: data.expense_title,
+      //       amount: data.amount
+      //     })
+      //   } else if (data.budget) {
+      //     monthlyBudget = data.amount
+      //   }
+      // })
+      // const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0)
+      
