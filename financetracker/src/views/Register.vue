@@ -64,11 +64,11 @@ const logIn = () => {
 body {
     background: linear-gradient(to right top, #49eded, #95d52d);
     background-size: cover;
-    min-height: 100vh;
+    min-height: 102vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
+    margin: -20px;
 }
 #container {
     width: 300px;
