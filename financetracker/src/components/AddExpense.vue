@@ -9,6 +9,7 @@
                     <!--1. category: drop down menu options-->
                     <label for="category">Category:</label>
                     <select v-model="selectedCategory">
+                        <option disabled value = "" selected>Select a category</option>
                         <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
                         <option value="new">Add a new category</option>
                     </select>
@@ -42,7 +43,7 @@
                     <input type="date" id="time" v-model="selectedTime">
                 </div>
                 <div class="save">
-                    <button id="addExpense" type="button" @click="addExpense">Add</button>
+                    <button id="addExpense" type="button" @click.prevent="addExpense">Add</button>
                 </div>
             </form>
         </div>
@@ -51,7 +52,7 @@
 
 <script>
 import firebaseApp from '../firebase.js';
-import { getFirestore, doc, setDoc, collection, addDoc} from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDocs, getDoc, collection, addDoc} from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
@@ -65,23 +66,23 @@ export default {
             newCategory: '',
             amount: '',
             title: '',
-            categories: [
-                // default categories
-                { id: 'food', name: 'Food' },
-                { id: 'transportation', name: 'Transportation' },
-                { id: 'utilities', name: 'Utilities'},
-                { id: 'housing', name: 'Housing'},
-                { id: 'fashion', name: "Fashion"},
-                { id: 'entertainment', name: "Entertainment" },
-                { id: 'communication', name: "Communication" },
-                { id: 'gifts', name: "Gifts" },
-                { id: 'health', name: "Health" },
-                { id: 'pets', name: "Pets" },
-                { id: 'grocery', name: "Grocery" },
-                { id: 'education', name: "Education" },
-                { id: 'others', name: "Others" },
-                // Add more default categories as needed
-            ],
+            categories: [],
+                // // default categories
+                // { id: 'food', name: 'Food' },
+                // { id: 'transportation', name: 'Transportation' },
+                // { id: 'utilities', name: 'Utilities'},
+                // { id: 'housing', name: 'Housing'},
+                // { id: 'fashion', name: "Fashion"},
+                // { id: 'entertainment', name: "Entertainment" },
+                // { id: 'communication', name: "Communication" },
+                // { id: 'gifts', name: "Gifts" },
+                // { id: 'health', name: "Health" },
+                // { id: 'pets', name: "Pets" },
+                // { id: 'grocery', name: "Grocery" },
+                // { id: 'education', name: "Education" },
+                // { id: 'others', name: "Others" },
+                // // Add more default categories as needed
+            // ],
             selectedTime: new Date().toISOString().substring(0, 10) // Set default value to current date (YYYY-MM-DD format)
         };
     },
@@ -89,11 +90,40 @@ export default {
         // Add event listener to close modal when clicking outside of it
         document.body.addEventListener('click', this.handleClickOutside);
         const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 this.user = user;
-            }
-        })
+                const db = getFirestore(firebaseApp);
+                const userEmailList = `${user.email}list`; // Collection name based on user's email
+                const collectionRef = collection(db, userEmailList);
+                const categories = [
+                "Food",
+                "Transport",
+                "Utilities",
+                "Housing",
+                "Fashion",
+                "Entertainment",
+                "Communication",
+                "Gifts",
+                "Health",
+                "Pets",
+                "Grocery",
+                "Education",
+                "Others"
+                ];
+
+                categories.forEach(async (category) => {
+                    const docRef = doc(collectionRef, category);
+                    try {
+                        await setDoc(docRef, { name: category });
+                        console.log(`${category} document created successfully.`);
+                    } catch (error) {
+                        console.error(`Error creating ${category} document:`, error);
+                    }
+                });
+                this.fetchCategories();         
+                }
+            })
     },
     computed: {
         isValidNewCategory() {
@@ -112,6 +142,27 @@ export default {
         }
     },
     methods: {
+        async fetchCategories() {
+            if (!this.user || !this.user.email) {
+                console.error("User or user email is undefined.");
+                return;  // Exit if no user or userEmail is defined
+            }
+
+            const db = getFirestore(firebaseApp);
+            const userEmail = this.user.email;
+            const categoriesCollectionRef = collection(db, `${this.user.email}list`);
+
+            try {
+                const querySnapshot = await getDocs(categoriesCollectionRef);
+                this.categories = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    name: doc.data().name
+                }));
+                console.log("Categories fetched successfully:", this.categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        },
         // Method to handle clicks outside the modal
         handleClickOutside(event) {
             const modal = document.querySelector('.modal');
@@ -137,6 +188,7 @@ export default {
                 return;
             }
 
+
             if (this.selectedCategory === 'new') {
                 if (!this.newCategory) {
                     alert('New category name cannot be empty.');
@@ -150,11 +202,24 @@ export default {
                 }
             }
 
+            const db = getFirestore(firebaseApp);
             const userEmail = this.user.email;
             // Generate a random field name using current timestamp
             const randomFieldName = `field_${Date.now()}`;
          
             try {
+                if (this.selectedCategory === 'new') {
+                    const helloCollectionRef = collection(db, `${this.user.email}list`);
+                    const categoryDocRef = doc(helloCollectionRef, this.newCategory);
+
+                    // Check if the category already exists in the collection
+                    const docSnap = await getDoc(categoryDocRef);
+                    if (!docSnap.exists()) {
+                        await setDoc(categoryDocRef, { name: this.newCategory });
+                        //this.categories.push({ id: this.newCategory, name: this.newCategory }); // Update local categories array
+                        console.log("New category added to 'hello' collection:", this.newCategory);
+                    }
+                }
                 // Get the category
                 const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
                 // Get a reference to the document
@@ -174,6 +239,7 @@ export default {
                 this.$emit("added");
             } catch (error) {
                 console.error('Error adding expense: ', error);
+                alert('Failed to add expense. Please try again.');
             }
         },
         
