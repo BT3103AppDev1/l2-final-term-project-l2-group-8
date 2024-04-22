@@ -138,4 +138,9 @@ button:hover {
     text-decoration: underline;
     color: gray
 }
+
+#resetPass:hover,
+#logIn:hover {
+    color: black
+}
 </style>

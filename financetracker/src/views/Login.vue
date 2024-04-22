@@ -142,4 +142,9 @@ button:hover {
     text-decoration: underline;
     color: gray
 }
+
+#resetPass:hover,
+#register:hover {
+    color: black
+}
 </style>
