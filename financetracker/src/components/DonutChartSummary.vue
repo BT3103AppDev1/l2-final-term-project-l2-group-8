@@ -64,29 +64,42 @@ export default {
         async fetchChartData() {
             try {
                 const snapshot = await getDocs(collection(db, String(this.user.email)));
-                let data = [];
-                let budgetSum = 0;
+                let categoryAmounts = {};
                 let expenseSum = 0;
+                let budgetSum = 0;
                 const currentDate = new Date();
                 const currentMonth = currentDate.getMonth();
                 const currentYear = currentDate.getFullYear();
 
                 snapshot.forEach(doc => {
-                    const docDate = new Date(doc.data().Date);
                     const isBudget = doc.data().budget;
-                    if (isBudget && docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
-                        data.push([doc.id, doc.data().amount]);
-                        budgetSum += doc.data().amount;
-                        
-                        //console.log(doc.data().amount)
-                        console.log("amount:", doc.data().amount, "budget:",budgetSum)
-                    } else if (docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
-                        expenseSum += doc.data().amount;
+                    if (isBudget) {
+                        const docDate = new Date(doc.data().Date);
+                        if (docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
+                            budgetSum += doc.data().amount;
+                        }
+                    }
+
+                    for (let key in doc.data()) {
+                        if (key.startsWith('field_')) {
+                            const expenseData = doc.data()[key];
+                            const docDate = new Date(expenseData.Date);
+                            if (expenseData.expense && docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
+                                let amount = parseFloat(expenseData.amount);
+                                expenseSum += amount;
+                                let category = doc.id;
+                                if (!categoryAmounts[category]) {
+                                    categoryAmounts[category] = 0;
+                                }
+                                categoryAmounts[category] += amount;
+                            }
+                        }
                     }
                 });
-                this.chartData = data;
-                this.totalBudget = budgetSum;
+
+                this.chartData = Object.keys(categoryAmounts).map(category => [category, categoryAmounts[category]]);
                 this.totalExpense = expenseSum;
+                this.totalBudget = budgetSum;
             } catch (error) {
                 console.error("Error fetching data: ", error);
             }

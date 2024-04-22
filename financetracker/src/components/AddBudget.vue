@@ -14,7 +14,7 @@
                     <option value="new">Add a new budget category</option>
                 </select>
                 <!-- Button to delete the selected category, visible only if a valid category is selected -->
-                <button v-if="selectedCategory && selectedCategory !== 'new'" @click="confirmAndDeleteCategory">Delete Selected Category</button>
+                <!-- <button v-if="selectedCategory && selectedCategory !== 'new'" @click="confirmAndDeleteCategory">Delete Selected Category</button> -->
 
                 <!-- Conditional input for new category with validation message -->
                 <div v-if="selectedCategory === 'new'" id="newCategory">
@@ -109,31 +109,31 @@ export default {
             }
         },
 
-        async confirmAndDeleteCategory() {
-            if (!this.selectedCategory || this.selectedCategory === 'new') {
-                alert('Please select a valid category to delete.');
-                return;
-            }
-            if (confirm(`Are you sure you want to delete the category "${this.categories.find(cat => cat.id === this.selectedCategory).name}" and all its contents? This action cannot be undone.`)) {
-                const db = getFirestore(firebaseApp);
-                const currentMonth = new Date().toISOString().slice(0, 7);
-                const userEmail = this.user ? this.user.email : null;
+        // async confirmAndDeleteCategory() {
+        //     if (!this.selectedCategory || this.selectedCategory === 'new') {
+        //         alert('Please select a valid category to delete.');
+        //         return;
+        //     }
+        //     if (confirm(`Are you sure you want to delete the category "${this.categories.find(cat => cat.id === this.selectedCategory).name}" and all its contents? This action cannot be undone.`)) {
+        //         const db = getFirestore(firebaseApp);
+        //         const currentMonth = new Date().toISOString().slice(0, 7);
+        //         const userEmail = this.user ? this.user.email : null;
 
-                if (!userEmail) {
-                    alert("No user logged in.");
-                    return;
-                }
+        //         if (!userEmail) {
+        //             alert("No user logged in.");
+        //             return;
+        //         }
 
-                const success = await this.deleteSubcollection(db, userEmail, currentMonth, this.selectedCategory);
-                if (success) {
-                    this.categories = this.categories.filter(cat => cat.id !== this.selectedCategory);
-                    this.selectedCategory = ''; // Reset selected category after deletion
-                    alert('Category and all associated records deleted successfully.');
-                } else {
-                    alert('Failed to delete category. Please try again.');
-                }
-            }
-        },
+        //         const success = await this.deleteSubcollection(db, userEmail, currentMonth, this.selectedCategory);
+        //         if (success) {
+        //             this.categories = this.categories.filter(cat => cat.id !== this.selectedCategory);
+        //             this.selectedCategory = ''; // Reset selected category after deletion
+        //             alert('Category and all associated records deleted successfully.');
+        //         } else {
+        //             alert('Failed to delete category. Please try again.');
+        //         }
+        //     }
+        // },
 
         async addBudget() {
             console.log("Starting addBudget method");
