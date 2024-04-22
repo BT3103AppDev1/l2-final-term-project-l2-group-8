@@ -43,7 +43,7 @@
 
 <script>
 import firebase from '@/uifire.js';
-// import 'firebase/compat/auth';
+import 'firebase/compat/auth';
 import * as firebaseui from 'firebaseui';
 import 'firebaseui/dist/firebaseui.css';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
@@ -64,8 +64,7 @@ export default {
         var uiConfig = {
             signInSuccessUrl: '/home',
             signInOptions: [
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                // firebase.auth.EmailAuthProvider.PROVIDER_ID
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             ]            
         };
         ui.start("#firebaseui-auth-container", uiConfig)    
@@ -77,22 +76,13 @@ export default {
         }
     },
     methods: {
-        
         login() {
             const auth = getAuth();
             if (!this.password || !this.email) {
                 alert("Please fill in all the requirements");
             } else {
-                signInWithEmailAndPassword(auth, this.email, this.password)
-                .then((userCredential) => {
-                    // Signed in 
-                    const user = userCredential.user;
-                    this.$router.push('/home');
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                });
+                signInWithEmailAndPassword(auth, this.email, this.password);
+                this.$router.push('/home');
             }
         }
     }
@@ -104,7 +94,7 @@ export default {
 
 body {
     min-height: 100vh;
-    background: linear-gradient(to right top, #008080, #bab86c);
+    background: linear-gradient(to right top, #49eded, #95d52d);
     display: flex;
     align-items: center;
     justify-content: center;

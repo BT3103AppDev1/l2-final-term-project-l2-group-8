@@ -1,10 +1,13 @@
 <template>
-    <AddBudget @added="change" />
-    <AddExpense @added="change" /><br><br>
-    <DonutChartSummary :key="refreshComp" />
-    <div>
-        <BarplotDisplay />
-    </div>
+
+    <body>
+        <AddBudget @added="change" />
+        <AddExpense @added="change" /><br><br>
+        <DonutChartSummary :key="refreshComp" />
+        <div>
+            <BarplotDisplay />
+        </div>
+    </body>
 </template>
 
 <script>

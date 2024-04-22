@@ -5,7 +5,7 @@
             <div class="total-expense">Total Expense: ${{ totalExpense.toFixed(2) }} </div>
         </div>
         <pie-chart :donut="true" :data="chartData" legend="bottom" prefix="$" loading="Loading..." height="70vh"
-            :colors="['#e97451', '#f1f9ec', '#008080', '#bab86c', '#fff0f5', '#b0e0e6', '#f5f5dc'
+            :colors="['#f1f9ec', '#008080', '#bab86c', '#fff0f5', '#b0e0e6', '#f5f5dc'
             , '#2a52be', '#bc987e', '#d8bfd8' ]" :library="{
             cutout: '65%',
             elements: { arc: { borderWidth: 0 } },
