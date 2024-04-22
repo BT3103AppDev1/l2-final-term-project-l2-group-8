@@ -2,7 +2,6 @@
     <AddBudget @added="change" />
     <AddExpense @added="change" /><br><br>
     <DonutChartSummary :key="refreshComp" />
-    <AddExpense @added="change"/>
     <div>
         <BarplotDisplay />
     </div>
