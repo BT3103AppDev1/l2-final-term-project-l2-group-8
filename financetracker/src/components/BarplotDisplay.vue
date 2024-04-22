@@ -8,7 +8,7 @@
         <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
         <span>{{ category.name }}</span>
       </div>
-      <bar-chart v-if="category.chartData && category.chartData.datasets[0].data.length > 0" :data="category.chartData" :stacked="true" :horizontal="true" :options="chartOptions"></bar-chart>
+      <bar-chart :data="category.chartData" :stacked="true" :horizontal="true" :options="chartOptions"></bar-chart>
       <!--expense table below barchart-->
       <table v-if="category.isExpanded" class="expenses-table">
         <tr v-for="expense in category.expenses" :key="expense.id">
@@ -100,9 +100,10 @@ export default {
           const data = docSnap.data();
           let expenses = [];
           let monthlyBudget = 0;
-          const currentMonth = new Date().getMonth();
+          const currentMonth = new Date().toISOString().slice(0, 7);
           //const currentYear = new Date().getFullYear();
-          monthlyBudget = data.budget;
+          monthlyBudget = parseFloat(data.amount);
+          console.log('budget is', monthlyBudget);
 
           for (let key in data) {
             if (key.startsWith('field_')) {
@@ -117,13 +118,16 @@ export default {
                   amount: expenseData.amount
                 });
                 expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
+                console.log(expenses);
               }
             }
           }
 
-          const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+          const totalExpense = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
           const value1 = totalExpense / monthlyBudget * 100;
           const value2 = (monthlyBudget - totalExpense) / monthlyBudget * 100;
+          console.log(totalExpense);
+          console.log(value1, value2);
 
           return {
             name: category,
