@@ -7,10 +7,12 @@
                 <textarea id="text" v-model="post.text" placeholder="Enter your text"></textarea>
                 <button @click="upload">Post</button>
             </div><br>
-            <div v-for="post in posts" class="view-posts">
+            <div v-for="(post, index) in posts" :key="index" class="view-posts">
                 <p><b>{{ post.title }}</b></p>
                 <p>{{ post.name }}</p>
                 <p>{{ post.text }}</p>
+                <button @click="like(index)" :class="{ liked: post.liked }">👍 {{ post.likes }}</button>
+                <button @click="dislike(index)" :class="{ disliked: post.disliked }">👎 {{ post.dislikes }}</button>
             </div>
         </div>
     </body>
@@ -21,7 +23,7 @@ export default {
     name: 'Forum',
     data() {
         return {
-            post: {name: "", title: "",text: ""},
+            post: {name: "", title: "",text: "", liked: false, disliked: false, likes: 0, dislikes: 0},
             posts: []            
         }
     },
@@ -32,13 +34,40 @@ export default {
         upload() {
             this.posts.push(this.post);
             localStorage.setItem('savedData', JSON.stringify(this.posts));
-            this.post = {name: "", title:"", text:""};
+            this.post = {name: "", title:"", text:"", liked: false, disliked: false, likes: 0, dislikes: 0};
+        },
+        like(index) {
+            if (!this.posts[index].liked) {
+                this.posts[index].likes++;
+                this.posts[index].liked = true;
+            } else {
+                this.posts[index].likes--;
+                this.posts[index].liked = false;
+            }
+            if (this.posts[index].disliked) {
+                this.posts[index].dislikes--;
+                this.posts[index].disliked = false;
+            }
+        },
+        dislike(index) {
+            if (!this.posts[index].disliked) {
+                this.posts[index].dislikes++;
+                this.posts[index].disliked = true;
+            } else {
+                this.posts[index].dislikes--;
+                this.posts[index].disliked = false;
+            }
+            if (this.posts[index].liked) {
+                this.posts[index].likes--;
+                this.posts[index].liked = false;
+            }
         }
     }
 }
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 body {
     background: linear-gradient(to right top, #49eded, #95d52d);
     background-size: cover;
@@ -77,6 +106,7 @@ textarea {
     border-radius: 20px;
     display: inline-block;
     padding: 10px;
+    width: 94%;
 }
 button {
     background-color: #dddddd;
@@ -94,5 +124,11 @@ p {
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-all;
+}
+.liked {
+    background-color: #bbbbbb;
+}
+.disliked {
+    background-color: #bbbbbb;
 }
 </style>
