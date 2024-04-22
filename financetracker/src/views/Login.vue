@@ -14,11 +14,9 @@
                 <div class="form-item-other">
                     <button @click="signIn">Sign In</button>
                 </div> 
-                <div class="form-item-other">
-                    <button @click="forgetPassword">Forget Password</button>
-                </div>
-                <div class="form-item-other">
-                    <button @click="register">Create An Account</button>
+                <div class="footer">
+                    <button id="resetPass" @click="forgetPassword">Forget Password?</button>
+                    <button id="register" @click="register">Create an Account</button>
                 </div>  
             </form>
         </div>
@@ -124,5 +122,24 @@ button {
 }
 button:hover {
     background-color: #aaaaaa;
+}
+
+.footer {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 4rem;
+}
+
+#resetPass,
+#register {
+    background: none;
+    width: 25%;
+    flex: 1;
+    margin: 0 3.5rem;
+    font-size: smaller;
+    text-decoration: underline;
+    color: gray
 }
 </style>

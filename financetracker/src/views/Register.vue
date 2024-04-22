@@ -1,4 +1,5 @@
 <template>
+
     <body>
         <div id="container">
             <h1>Create an Account</h1><br>
@@ -13,13 +14,11 @@
                 </div><br>
                 <div class="form-item-other">
                     <button @click="register">Register</button>
-                </div> 
-                <div class="form-item-other">
-                    <button @click="forgetPassword">Forget Password</button>
                 </div>
-                <div class="form-item-other">
-                    <button @click="logIn">User Log In</button>
-                </div>    
+                <div class="footer">
+                    <button id="resetPass" @click="forgetPassword">Forget Password?</button>
+                    <button id="logIn" @click="logIn">Log in</button>
+                </div>
             </form>
         </div>
     </body>
@@ -119,5 +118,24 @@ button {
 }
 button:hover {
     background-color: #aaaaaa;
+}
+
+.footer {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 4rem;
+}
+
+#resetPass,
+#logIn {
+    background: none;
+    width: 25%;
+    flex: 1;
+    margin: 0 3.5rem;
+    font-size: smaller;
+    text-decoration: underline;
+    color: gray
 }
 </style>

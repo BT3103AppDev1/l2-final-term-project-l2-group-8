@@ -12,8 +12,8 @@
                     <button @click="sendEmail">Send Email</button>
                 </div>
                 <div class="footer">
-                    <button id="signIn" @click="signIn">Back To Log In</button>
-                    <button id="register" @click="register">Create An Account</button>
+                    <button id="signIn" @click="signIn">Back to Log in</button>
+                    <button id="register" @click="register">Create an Account</button>
                 </div>
             </form>
         </div>
