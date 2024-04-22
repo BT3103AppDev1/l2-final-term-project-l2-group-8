@@ -20,7 +20,7 @@ export default {
     components: {
         AddBudget,
         AddExpense,
-        BarplotDisplay
+        BarplotDisplay,
         DonutChartSummary
     },
     data() {
