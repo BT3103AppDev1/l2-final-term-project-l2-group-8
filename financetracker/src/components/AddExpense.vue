@@ -51,7 +51,7 @@
 
 <script>
 import firebaseApp from '../firebase.js';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, collection, addDoc} from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const db = getFirestore(firebaseApp);
 
@@ -86,6 +86,8 @@ export default {
         };
     },
     mounted() {
+        // Add event listener to close modal when clicking outside of it
+        document.body.addEventListener('click', this.handleClickOutside);
         const auth = getAuth();
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -94,15 +96,12 @@ export default {
         })
     },
     computed: {
-        // Check if new category name is valid
         isValidNewCategory() {
             return !this.newCategory || (this.newCategory.length <= 20 && /^[a-zA-Z0-9 ]+$/.test(this.newCategory));
         },
-        // Check if title is valid
         isValidTitle() {
             return !this.title || this.title.length <= 100;
         },
-        // Check if amount is valid
         isValidAmount() {
             const numAmount = parseFloat(this.amount);
             return this.amount && !isNaN(numAmount) && numAmount >= 0 && numAmount <= 1000000;
@@ -113,6 +112,17 @@ export default {
         }
     },
     methods: {
+        // Method to handle clicks outside the modal
+        handleClickOutside(event) {
+            const modal = document.querySelector('.modal');
+            const createExpenseButton = document.getElementById('createExpense');
+
+            // Check if the click target is outside the modal and not the button
+            if (!modal.contains(event.target) && event.target !== createExpenseButton) {
+                this.closeModal();
+            }
+        },
+
         async addExpense() {
             // Validate input
             if (!this.selectedCategory || !this.amount || !this.title || !this.selectedTime) {
@@ -139,20 +149,23 @@ export default {
                 }
             }
 
+            const userEmail = this.user.email;
+            // Generate a random field name using current timestamp
+            const randomFieldName = `field_${Date.now()}`;
          
             try {
-                // Get the month from selectedTime
-                const selectedMonth = this.selectedTime.split('-')[1];
                 // Get the category
                 const userCategory = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
-                // Reference to the category's document
-                const categoryDocRef = [String(this.user.email), selectedMonth, userCategory];
-                // Add the expense to the category's expenses subcollection
-                await addDoc(collection(db, ...categoryDocRef), {
-                    title: this.title,
-                    amount: numAmount,
-                    selectedTime: this.selectedTime
-                });
+                // Get a reference to the document
+                const docRef = doc(db, userEmail, userCategory);
+                const expenseField = {
+                    Date: this.selectedTime,
+                    amount: this.amount,
+                    budget: false,
+                    expense: true,
+                    expense_title: this.title
+                }
+                await setDoc(docRef, { [randomFieldName]: expenseField }, { merge: true });
 
                 alert(" Saving your expense for: " + this.title)
 
@@ -193,8 +206,12 @@ export default {
 
             // Update the Vue model
             this.amount = value;
-            }
+        }
     },
+    beforeUnmount() {
+        // Remove event listener when component is unmounted
+        document.body.removeEventListener('click', this.handleClickOutside);
+    }
 };
 </script>
 
