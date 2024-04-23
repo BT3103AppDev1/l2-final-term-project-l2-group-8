@@ -7,7 +7,9 @@
   <div v-for="category in sortedCategories" :key="category.name">
     <div class="category-header">
       <!--▶ category name: barplot-->
+      <div class="icon">
       <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
+      </div>
       <div class="label">
       <span>{{ category.name }}</span>
       </div>
@@ -15,7 +17,9 @@
         <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
 
       </div>
+      <div class="progress">
       <span>{{ category.value1 + '%'}}</span>
+      </div>
     </div>
     <!--expense table below barchart-->
     <table v-if="category.isExpanded" class="expenses-table">
@@ -193,6 +197,15 @@ export default {
   position:relative;
 }
 
+.icon {
+  display: inline-block;
+  width: 20px; /* adjust this value to your needs */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
 .label {
   display: inline-block;
   width: 80px; /* adjust this value to your needs */
@@ -208,7 +221,8 @@ export default {
 }
 
 .barchart-display {
-  width: 400px; 
+  width: 500px; 
+  margin-right: 10px;
 }
 .icon-expanded {
   transform: rotate(90deg);
