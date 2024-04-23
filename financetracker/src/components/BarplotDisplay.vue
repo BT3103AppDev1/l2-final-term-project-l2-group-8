@@ -8,9 +8,7 @@
   <div v-for="category in sortedCategories" :key="category.name">
     <div class="category-header">
       <!--▶ category name: barplot-->
-      <div class="icon">
-      <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
-      </div>
+      <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)" >▶</span>
       <div class="label">
       <span>{{ category.name }}</span>
       </div>
@@ -204,15 +202,6 @@ export default {
   position:relative;
 }
 
-.icon {
-  display: inline-block;
-  width: 20px; /* adjust this value to your needs */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: left;
-}
-
 .label {
   display: inline-block;
   width: 120px; /* adjust this value to your needs */
@@ -220,6 +209,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+  margin-left: 10px;
 }
 
 .category-header {
@@ -237,6 +227,7 @@ export default {
 .expenses-table {
   border-collapse: collapse;
   text-align: left;
+  margin-left: 140px;
 }
 
 .expenses-table td, .expenses-table th {
@@ -251,5 +242,8 @@ export default {
   background-color: #4CAF50;
   color: white;
 }
-</style>
+.icon-expanded {
+  transform: rotate(90deg);
+}
 
+</style>
