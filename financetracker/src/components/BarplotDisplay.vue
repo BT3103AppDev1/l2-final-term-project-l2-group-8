@@ -1,25 +1,33 @@
 <template>
+  <div class="barplotContainer">
   <div>
     <h3>Category</h3>
-    <!--loop the categories in the order of descending total expenses-->
-    <div v-for="category in sortedCategories" :key="category.name">
-      <div class="category-header">
-        <!--▶ category name: barplot-->
-        <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
-        <span>{{ category.name }}</span>
-      </div>
-      <bar-chart :data="category.chartData" :stacked="true" :horizontal="true" :options="chartOptions"></bar-chart>
-      <!--expense table below barchart-->
-      <table v-if="category.isExpanded" class="expenses-table">
-        <tr v-for="expense in category.expenses" :key="expense.id">
-          <!--table columns-->
-          <td>{{ expense.date }}</td>
-          <td>{{ expense.expense_title }}</td>
-          <td>{{ expense.amount }}</td>
-        </tr>
-      </table>
-    </div>
   </div>
+  <!--loop the categories in the order of descending total expenses-->
+  <div v-for="category in sortedCategories" :key="category.name">
+    <div class="category-header">
+      <!--▶ category name: barplot-->
+      <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)">▶</span>
+      <div class="label">
+      <span>{{ category.name }}</span>
+      </div>
+      <div class="barchart-display">
+        <bar-chart :data="category.chartData" :colors="['green', 'white']" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
+
+      </div>
+      <span>{{ category.value1 + '%'}}</span>
+    </div>
+    <!--expense table below barchart-->
+    <table v-if="category.isExpanded" class="expenses-table">
+      <tr v-for="expense in category.expenses" :key="expense.id">
+        <!--table columns-->
+        <td>{{ expense.date }}</td>
+        <td>{{ expense.expense_title }}</td>
+        <td>{{ '$' + expense.amount.toString() }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
 </template>
 
 <script>
@@ -27,31 +35,51 @@ import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firesto
 import firebaseApp from '../firebase.js';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import 'chartkick/chart.js'
+import 'chart.js';
+
+
 
 const db = getFirestore(firebaseApp);
 
 export default {
   name:"BarplotDisplay",
-  //props: ['key'],
-  // watch: {
-  //     // Watch for changes in the key prop, which is the refreshComp from the parent
-  //     key(newValue, oldValue) {
-  //         if (newValue !== oldValue) {
-  //             this.fetchChartData();
-  //         }
-  //     }
-  // },
+  props: ['key'],
+  watch: {
+      // Watch for changes in the key prop, which is the refreshComp from the parent
+      key(newValue, oldValue) {
+          if (newValue !== oldValue) {
+              this.fetchChartData();
+          }
+      }
+  },
   data() {
     return {
+      // chartData2: [
+      //   {name: "Category 1", data: {"Segment 1": 20, "Segment 2": 30}},
+      //   {name: "Category 2", data: {"Segment 1": 50, "Segment 2": 10}},
+      //   {name: "Category 3", data: {"Segment 1": 30, "Segment 2": 40}}
+      // ],
+      chartOptions: {
+        scales: {
+          x: { 
+            stacked: true,
+            display: false
+          },
+          y: { 
+            stacked: true,
+            display: false
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      },
       //save a list of category objects constructed by fetchCategoryData()
       categories: [],
       //save the data to be displayed for each category
       //chartData: [],
       //use current month to filter out relevant data
-      currentMonth: new Date().getMonth() + 1,
-      chartOptions: {
-        //options
-      },
       user:null,
       value1: 0,
       value2: 0,
@@ -63,7 +91,21 @@ export default {
   computed: {
     //sort the categories in the order of descending total expenses
     sortedCategories() {
-      return this.categories.sort((a, b) => b.totalExpense - a.totalExpense)
+      const sorted = this.categories.sort((a, b) => b.totalExpense - a.totalExpense);
+      return sorted;
+    },
+    barColors() {
+      return this.categories.map(category => {
+        if (category.value1 > 95) {
+          return ['black', 'white'];
+        } else if (category.value1 > 80) {
+          return ['#006400', 'white']; // DarkGreen
+        } else if (category.value1 > 50) {
+          return ['#008000', 'white']; // Green
+        } else {
+          return ['green', 'white']; // Lighter shade of green
+        }
+      });
     }
   },
   mounted() {
@@ -80,6 +122,8 @@ export default {
         for (const doc of snapshot.docs) {
           this.categories.push(await this.fetchCategoryData(doc.id))
         }
+        console.log(this.categories[1].chartData.labels);
+        console.log(this.categories[1].chartData.dataset);
       }
     })
   },
@@ -117,15 +161,15 @@ export default {
                   expense_title: expenseData.expense_title,
                   amount: expenseData.amount
                 });
-                expenses.sort((a, b) => new Date(a.date) - new Date(b.date));
+                expenses.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
                 console.log(expenses);
               }
             }
           }
 
           const totalExpense = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-          const value1 = totalExpense / monthlyBudget * 100;
-          const value2 = (monthlyBudget - totalExpense) / monthlyBudget * 100;
+          const value1 = (totalExpense / monthlyBudget * 100).toFixed(2);;
+          const value2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
           console.log(totalExpense);
           console.log(value1, value2);
 
@@ -134,15 +178,12 @@ export default {
             isExpanded: false,
             expenses,
             totalExpense,
-            chartData: {
-              labels: ['Expenses', 'Remaining Budget'],
-              datasets: [{
-                data: [value1, value2],
-                backgroundColor: ['black', 'white']
-              }]
-            }
+            value1: value1,
+            chartData: [
+              {name: "Expenses", data:{"category": value1}},
+              {name: "Remaining Budget", data:{"category": value2}}
+            ]}
           };
-        }  
       } catch (error) {
         console.error(`Error fetching data for category ${category}:`, error);
       }
@@ -154,89 +195,46 @@ export default {
 </script>
 
 <style scoped>
+.barplotContainer{
+  position:relative;
+}
+
+.label {
+  display: inline-block;
+  width: 80px; /* adjust this value to your needs */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
 .category-header {
   display: flex;
   align-items: center;
+}
+
+.barchart-display {
+  width: 400px; 
 }
 .icon-expanded {
   transform: rotate(90deg);
 }
 .expenses-table {
-  max-height: 200px;
-  overflow-y: auto;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.expenses-table td, .expenses-table th {
+  padding: 8px;
+  white-space: nowrap; /* This will prevent the text from breaking into the next line */
+}
+
+.expenses-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
 }
 </style>
 
-// //fetch all the necessary data from one category
-    // async fetchChartData(category) {
-    //   //reference build to this specific category
-    //   const categoryRef = collection(db, this.user.email, category)
-    //   //get all docs in this category
-    //   const snapshot = await getDocs(categoryRef)
-    //   let expenses = [] //store list of expenses
-    //   let monthlyBudget = 0
-    //   //for each category
-    //   snapshot.forEach(doc => {
-    //     const data = doc.data();
-    //     const monthlyBudget = data.budget; //this is the budget for this category. that's all for budget
-    //     const monthlyExpense = 0;
-    //     //for each field of expenses
-    //     for (let key in doc.data()) {
-    //       if (key.startsWith('field_')) {
-    //         const expenseData = doc.data()[key];//inner value of each expense field
-    //         const docDate = new Date(expenseData.Date);
-    //         //filter out this month's expenses
-    //         if (expenseData.expense && docDate.getMonth() === currentMonth && docDate.getFullYear() === currentYear) {
-    //           let amount = parseFloat(expenseData.amount);
-    //           monthlyExpense += amount; //add to total expense
-    //           expenses.push({ //push into expense table
-    //             id: key,
-    //             date: expenseData.Date, 
-    //             expense_title: expenseData.expense_title, 
-    //             amount: expenseData.amount
-    //           })
-    //           value1 = (monthlyBudget - totalExpense) / monthlyBudget * 100
-    //           value2 = totalExpense / monthlyBudget * 100
-    //           return {
-    //             name: category,
-    //             isExpanded: false,
-    //             expenses,
-    //             totalExpense,
-    //             chartData: {
-    //             labels: ['Remaining Budget', 'Expenses'],
-    //             datasets: [{
-    //             data: [value1, value2],
-    //             backgroundColor: ['black', 'white']
-    //           }]
-    //     }
-    //   }
-    // },
-                  //               let category = doc.id;
-                  //               if (!categoryAmounts[category]) {
-                  //                   categoryAmounts[category] = 0;
-                  //               }
-                  //               categoryAmounts[category] += amount;
-                  //           }
-                  //       }
-                  //   }
-    // data() {
-    // return {
-    //   chartData: {
-    //     'Category A': [30, 70],
-    //     'Category B': [80, 20]
-    //   }
-    // };
-
-      //   if (data.expense && data.Date.slice(0, 7) === this.currentMonth) {
-      //     expenses.push({
-      //       id: doc.id,
-      //       date: data.Date,
-      //       expense_title: data.expense_title,
-      //       amount: data.amount
-      //     })
-      //   } else if (data.budget) {
-      //     monthlyBudget = data.amount
-      //   }
-      // })
-      // const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0)
-      

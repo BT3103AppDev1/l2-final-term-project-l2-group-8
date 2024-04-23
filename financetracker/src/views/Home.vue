@@ -1,9 +1,12 @@
 <template>
-    <AddBudget @added="change" />
-    <AddExpense @added="change"/>
-    <div>
-        <BarplotDisplay />
-    </div>
+
+    <body>
+        <AddBudget @added="change" />
+        <AddExpense @added="change" /><br><br>
+        <div class="barplotContainer">
+            <BarplotDisplay />
+        </div>
+    </body>
 </template>
 
 <script>
@@ -16,7 +19,7 @@ export default {
     components: {
         AddBudget,
         AddExpense,
-        BarplotDisplay
+        BarplotDisplay,
     },
     data() {
         return {
