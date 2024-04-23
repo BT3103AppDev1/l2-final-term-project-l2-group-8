@@ -45,7 +45,7 @@ const register = async (event) => {
         const user = userCredential.user;
         router.push('/forum');
     } catch (error) {
-        alert(error.message);
+        alert("Failed to register! Please check your email and password!");
         console.log(error.code);
     }
 };

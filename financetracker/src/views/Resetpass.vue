@@ -34,7 +34,7 @@ const sendEmail = async (event) => {
         await sendPasswordResetEmail(auth, email.value);
         alert("Password reset email sent!")
     } catch (error) {
-        alert(error.message);
+        alert("Failed to send email! Please check your email!");
         console.log(error.code);
     }
 }
@@ -62,7 +62,7 @@ body {
 }
 #container {
     width: 300px;
-    height: 200px;
+    height: 300px;
     padding: 100px;
     background-color: #ffffff77;
     border-radius: 10px;
