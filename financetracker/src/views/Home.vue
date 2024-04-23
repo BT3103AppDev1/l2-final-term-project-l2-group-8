@@ -4,7 +4,7 @@
         <AddBudget @added="change" />
         <AddExpense @added="change" /><br><br>
         <div class="barplotContainer">
-            <BarplotDisplay />
+            <BarplotDisplay :key="refreshComp" />
         </div>
     </body>
 </template>

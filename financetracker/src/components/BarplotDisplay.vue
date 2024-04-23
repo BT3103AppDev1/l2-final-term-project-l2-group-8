@@ -12,7 +12,7 @@
       <span>{{ category.name }}</span>
       </div>
       <div class="barchart-display">
-        <bar-chart :data="category.chartData" :colors="['green', 'white']" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
+        <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
 
       </div>
       <span>{{ category.value1 + '%'}}</span>
@@ -93,19 +93,6 @@ export default {
     sortedCategories() {
       const sorted = this.categories.sort((a, b) => b.totalExpense - a.totalExpense);
       return sorted;
-    },
-    barColors() {
-      return this.categories.map(category => {
-        if (category.value1 > 95) {
-          return ['black', 'white'];
-        } else if (category.value1 > 80) {
-          return ['#006400', 'white']; // DarkGreen
-        } else if (category.value1 > 50) {
-          return ['#008000', 'white']; // Green
-        } else {
-          return ['green', 'white']; // Lighter shade of green
-        }
-      });
     }
   },
   mounted() {
@@ -172,12 +159,19 @@ export default {
           const value2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
           console.log(totalExpense);
           console.log(value1, value2);
-
+          let colour = ['green', 'white'];
+          if (value1 > 50 && value1 <= 80) {
+            colour = ['orange', 'white'];
+          } else if (value1 > 80) {
+            colour = ['red', 'white'];
+          };
+          console.log(colour);
           return {
             name: category,
             isExpanded: false,
             expenses,
             totalExpense,
+            colour,
             value1: value1,
             chartData: [
               {name: "Expenses", data:{"category": value1}},
@@ -225,13 +219,13 @@ export default {
 }
 
 .expenses-table td, .expenses-table th {
-  padding: 8px;
+  padding:4px;
   white-space: nowrap; /* This will prevent the text from breaking into the next line */
 }
 
 .expenses-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   text-align: left;
   background-color: #4CAF50;
   color: white;

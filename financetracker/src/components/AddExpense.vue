@@ -67,22 +67,6 @@ export default {
             amount: '',
             title: '',
             categories: [],
-                // // default categories
-                // { id: 'food', name: 'Food' },
-                // { id: 'transportation', name: 'Transportation' },
-                // { id: 'utilities', name: 'Utilities'},
-                // { id: 'housing', name: 'Housing'},
-                // { id: 'fashion', name: "Fashion"},
-                // { id: 'entertainment', name: "Entertainment" },
-                // { id: 'communication', name: "Communication" },
-                // { id: 'gifts', name: "Gifts" },
-                // { id: 'health', name: "Health" },
-                // { id: 'pets', name: "Pets" },
-                // { id: 'grocery', name: "Grocery" },
-                // { id: 'education', name: "Education" },
-                // { id: 'others', name: "Others" },
-                // // Add more default categories as needed
-            // ],
             selectedTime: new Date().toISOString().substring(0, 10) // Set default value to current date (YYYY-MM-DD format)
         };
     },
