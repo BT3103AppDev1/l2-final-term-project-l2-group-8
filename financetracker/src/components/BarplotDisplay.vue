@@ -208,7 +208,7 @@ export default {
 
 .label {
   display: inline-block;
-  width: 80px; /* adjust this value to your needs */
+  width: 120px; /* adjust this value to your needs */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
