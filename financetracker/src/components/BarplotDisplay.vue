@@ -1,4 +1,5 @@
 <template>
+  <div class = 'parent'>
   <div class="barplotContainer">
   <div>
     <h3>Category</h3>
@@ -31,6 +32,7 @@
       </tr>
     </table>
   </div>
+</div>
 </div>
 </template>
 
@@ -193,6 +195,11 @@ export default {
 </script>
 
 <style scoped>
+.parent {
+  display: flex;
+  justify-content: center;
+}
+
 .barplotContainer{
   position:relative;
 }
