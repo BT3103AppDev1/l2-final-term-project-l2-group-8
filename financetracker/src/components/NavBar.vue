@@ -52,17 +52,12 @@ export default {
 
 <style scoped>
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 #container {
     background-color: #f1f9ec;
     position: absolute;
     top: 0;
     left: -30px;
-    height: 55px;
+    height: 60px;
     width: 102%;
     margin: 0 23px;
     z-index: 10000;

@@ -6,7 +6,7 @@
         </div><br><br>
         <AddBudget @added="change" />
         <AddExpense @added="change" /><br><br>
-        <DonutChartSummary :key="refreshComp" /><br><br>
+        <DonutChartSummary :key="refreshComp" />
         <div class="barplotContainer">
             <BarplotDisplay :key="refreshComp" />
         </div>

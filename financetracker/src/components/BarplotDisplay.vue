@@ -1,7 +1,7 @@
 <template>
   <div class='parent'>
     <div class="barplotContainer">
-      <div>
+      <div class="header">
         <h3>Category</h3>
       </div>
       <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: red; text-align: center;">
@@ -273,5 +273,9 @@ export default {
 
 .icon-expanded {
   transform: rotate(90deg);
+}
+
+.header{
+  text-align: center;
 }
 </style>
