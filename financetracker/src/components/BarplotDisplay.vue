@@ -202,6 +202,7 @@ export default {
 .parent {
   display: flex;
   justify-content: center;
+  padding-bottom: 5%;
 }
 
 .barplotContainer {

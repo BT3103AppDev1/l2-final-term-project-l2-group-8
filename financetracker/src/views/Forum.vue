@@ -188,7 +188,7 @@ body {
     background-color: #ffffff77;
     border-radius: 20px;
     margin:30px;
-    margin-top: 20vh;
+    margin-top: 15vh;
 }
 #add-a-post {
     margin: 20px;

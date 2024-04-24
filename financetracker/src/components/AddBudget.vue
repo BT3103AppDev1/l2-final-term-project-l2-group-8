@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getFirestore, collection, query, getDocs, setDoc, doc, deleteDoc, writeBatch,getDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, getDocs, setDoc, doc, deleteDoc, writeBatch,getDoc, addDoc } from 'firebase/firestore';
 import firebaseApp from '../firebase.js';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -187,7 +187,7 @@ export default {
                         };
 
                         // Add the budget document to the category subcollection
-                        await setDoc(catDocRef,budgetData);
+                await setDoc(catDocRef, budgetData, { merge: true });
                 this.closeModal();
                 alert('Budget added successfully!');
                 this.$emit("added");
@@ -312,6 +312,7 @@ button:hover {
 
 #createBudget {
     float: inline-end;
+    margin-inline-end: 2%;
 }
 
 #addBudget {
