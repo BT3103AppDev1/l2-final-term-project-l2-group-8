@@ -84,7 +84,8 @@ body {
   justify-content: center;
   padding-top:3vh;
   min-width: 100%;
-  margin:0;
+  margin:-20px;
+  margin-top: 1em;
 }
 
 .header {

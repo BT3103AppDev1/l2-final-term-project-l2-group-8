@@ -2,7 +2,7 @@
 
     <body>
         <div id="container" v-if="user">
-            <img src="" alt="logo">
+            <img src="@/assets/logo.png" alt="logo">
             <button id="btn" @click="signOut()"> Logout </button>
             <nav>
                 <div>
@@ -68,9 +68,9 @@ export default {
 }
 
 img {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
+    position: relative;
+    height:4em;
+    margin-left: -0.5em;
 }
 
 nav {

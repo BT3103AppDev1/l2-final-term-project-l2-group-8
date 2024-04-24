@@ -4,7 +4,7 @@
       <div class="header">
         <h3>Category</h3>
       </div>
-      <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: red; text-align: center;">
+      <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: #b30900; text-align: center;">
         Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].calculatedValue1 }}%
       </div>
       <!--loop the categories in the order of descending total expenses-->
@@ -178,7 +178,7 @@ export default {
             value1 = 100;
             value2 = 0;
           } else {
-            colour = calculatedValue1 > 80 ? ['red', 'white'] : calculatedValue1 > 50 ? ['orange', 'white'] : ['green', 'white'];
+            colour = calculatedValue1 > 80 ? ['red', 'ivory'] : calculatedValue1 > 50 ? ['orange', 'ivory'] : ['green', 'ivory'];
             value1 = calculatedValue1;
             value2 = calculatedValue2;
           }
