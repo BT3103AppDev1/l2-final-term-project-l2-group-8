@@ -30,7 +30,7 @@ export default {
     name: "DonutChartSummary",
     props: ['key'],
     watch: {
-        // Watch for changes in the key prop, which is the refreshComp from the parent
+        // When refreshComp changes, new user data is automatically fecthed
         key(newValue, oldValue) {
             if (newValue !== oldValue) {
                 this.fetchChartData();
@@ -61,6 +61,7 @@ export default {
         });
     },
     methods: {
+        // fetch user data from firebase for doughnut chart and number summaries
         async fetchChartData() {
             try {
                 const snapshot = await getDocs(collection(db, String(this.user.email)));

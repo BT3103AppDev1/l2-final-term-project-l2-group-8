@@ -170,24 +170,24 @@ export default {
                         console.log("New category added to 'hello' collection:", this.newCategory);
                     }
                 }
-                        const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
-                        const budgetAmount = numAmount; // The numerical budget amount
-                        // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
+                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
+                const budgetAmount = numAmount; // The numerical budget amount
+                // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
 
-                        // Path to the category document within the user's email collection
-                        const catDocRef = doc(collection(db, userEmail), categoryName);
+                // Path to the category document within the user's email collection
+                const catDocRef = doc(collection(db, userEmail), categoryName);
 
-                        // Prepare the budget data with the amount and timestamp
-                        const budgetData = {
-                            Date: new Date().toISOString(),
-                            amount: budgetAmount,
-                            budget: true,
-                            expense: false,
-                            expense_title: ""  
-                        };
+                // Prepare the budget data with the amount and timestamp
+                const budgetData = {
+                    Date: new Date().toISOString(),
+                    amount: budgetAmount,
+                    budget: true,
+                    expense: false,
+                    expense_title: ""  
+                };
 
-                        // Add the budget document to the category subcollection
-                        await setDoc(catDocRef,budgetData);
+                // Add the budget document to the category subcollection
+                await setDoc(catDocRef,budgetData);
                 this.closeModal();
                 alert('Budget added successfully!');
                 this.$emit("added");

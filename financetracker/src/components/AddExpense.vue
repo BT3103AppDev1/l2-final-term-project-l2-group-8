@@ -170,6 +170,7 @@ export default {
                 alert(" Saving your expense for: " + this.title)
 
                 this.closeModal();
+                this.$emit("added")
             } catch (error) {
                 console.error('Error adding expense: ', error);
             }
