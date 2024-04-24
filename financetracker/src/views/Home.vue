@@ -19,6 +19,7 @@ import AddExpense from "../components/AddExpense.vue"
 import BarplotDisplay from '../components/BarplotDisplay.vue'
 import DonutChartSummary from "@/components/DonutChartSummary.vue"
 import NavBar from "@/components/NavBar.vue"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
     name: 'App',

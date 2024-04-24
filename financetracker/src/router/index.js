@@ -5,6 +5,8 @@ import Forum from '../views/Forum.vue';
 import Resetpass from '@/views/Resetpass.vue';
 import Home from '@/views/Home.vue';
 import NotFound from '@/views/NotFound.vue';
+import Product from "../views/FinancialProductPage.vue"
+import FinancialProductPage from '../views/FinancialProductPage.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -38,7 +40,12 @@ const router = createRouter({
       path: '/:catchAll(.*)',
       name: 'NotFound',
       component: NotFound,
-    }
+    },
+    {
+        path: "/products",
+        name: "products",
+        component: Product,
+      }
     ]
 })
 

@@ -319,7 +319,7 @@ export default {
 button {
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #f1f9ec;
+    background-color: #e3e4d4;
     color: black;
     border: none;
     cursor: pointer;

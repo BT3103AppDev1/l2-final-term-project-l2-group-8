@@ -53,16 +53,18 @@ export default {
 <style scoped>
 
 #container {
-    background-color: #f1f9ec;
-    position: absolute;
+    background-color: #f6f3e7;
+    /* #f1f9ec; */
+    position: fixed;
+    z-index: 1000;
     top: 0;
-    left: -30px;
+    left: 0;
     height: 60px;
     width: 100%;
-    margin: 0 23px;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
+    box-sizing: border-box;
 }
 
 img {

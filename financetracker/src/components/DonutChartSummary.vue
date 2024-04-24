@@ -5,8 +5,8 @@
             <div class="total-expense">Total Expense: ${{ totalExpense.toFixed(2) }} </div>
         </div>
         <pie-chart :donut="true" :data="chartData" legend="bottom" prefix="$" loading="Loading..." height="70vh"
-            :colors="['#f1f9ec', '#008080', '#bab86c', '#fff0f5', '#b0e0e6', '#f5f5dc'
-            , '#2a52be', '#bc987e', '#d8bfd8' ]" :library="{
+            :colors="['#E9E4BF', '#B6AD90', '#AC855E', '#C0C7AB', '#f6f3e7', '#ABC09F', '#bc987e', '#E1DACA', '#D5ADA4', '#008080', '#676B6E', '#E3D7BD',  
+             ]" :library="{
             cutout: '65%',
             elements: { arc: { borderWidth: 0 } },
             plugins: { legend: { labels: { color: '#36454F '}}}
@@ -134,7 +134,7 @@ export default {
 
     .total-expense {
         font-weight: bold;
-        color: #d65940;
+        color: #C23B22;
     }
 
     .balance-display {
