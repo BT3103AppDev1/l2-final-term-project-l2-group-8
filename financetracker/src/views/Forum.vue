@@ -189,11 +189,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 body {
     background: linear-gradient(to right top, #008080, #bab86c);
-    background-size: cover;
+    background-size:cover;
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    margin:0;
+    margin:-20px;
     height:100%;
 }
 #container {
