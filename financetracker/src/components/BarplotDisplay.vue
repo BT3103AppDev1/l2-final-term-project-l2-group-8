@@ -1,37 +1,43 @@
 <template>
-  <div class = 'parent'>
-  <div class="barplotContainer">
-  <div>
-    <h3>Category</h3>
-  </div>
-  <!--loop the categories in the order of descending total expenses-->
-  <div v-for="category in sortedCategories" :key="category.name">
-    <div class="category-header">
-      <!--▶ category name: barplot-->
-      <span :class="{'icon-expanded': category.isExpanded}" @click="toggleExpand(category)" >▶</span>
-      <div class="label">
-      <span>{{ category.name }}</span>
+  <div class='parent'>
+    <div class="barplotContainer">
+      <div>
+        <h3>Category</h3>
       </div>
-      <div class="barchart-display">
-        <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
-
+      <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: red; text-align: center;">
+        Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].value1 }}%
       </div>
-      <div class="progress">
-      <span>{{ category.value1 + '%'}}</span>
+      <!--loop the categories in the order of descending total expenses-->
+      <div v-for="category in sortedCategories" :key="category.name">
+        <div class="category-header">
+          <!--▶ category name: barplot-->
+          <span :class="{ 'icon-expanded': category.isExpanded }" @click="toggleExpand(category)">▶</span>
+          <div class="label">
+            <span>{{ category.name }}</span>
+          </div>
+          <div class="barchart-display" v-if="!isNaN(category.value1)">
+            <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true"
+              :library="chartOptions" height="13px"></bar-chart>
+          </div>
+          <div class="reminder" v-if="isNaN(category.value1)">
+            <h6>Please set a budget for {{ category.name }}</h6>
+          </div>
+          <div class="progress" v-if="!isNaN(category.value1)">
+            <span>{{ category.value1 + '%' }}</span>
+          </div>
+        </div>
+        <!--expense table below barchart-->
+        <table v-if="category.isExpanded" class="expenses-table">
+          <tr v-for="expense in category.expenses" :key="expense.id">
+            <!--table columns-->
+            <td>{{ expense.date }}</td>
+            <td>{{ expense.expense_title }}</td>
+            <td>{{ '$' + expense.amount.toString() }}</td>
+          </tr>
+        </table>
       </div>
     </div>
-    <!--expense table below barchart-->
-    <table v-if="category.isExpanded" class="expenses-table">
-      <tr v-for="expense in category.expenses" :key="expense.id">
-        <!--table columns-->
-        <td>{{ expense.date }}</td>
-        <td>{{ expense.expense_title }}</td>
-        <td>{{ '$' + expense.amount.toString() }}</td>
-      </tr>
-    </table>
   </div>
-</div>
-</div>
 </template>
 
 <script>
@@ -46,15 +52,15 @@ import 'chart.js';
 const db = getFirestore(firebaseApp);
 
 export default {
-  name:"BarplotDisplay",
+  name: "BarplotDisplay",
   props: ['key'],
   watch: {
-      // Watch for changes in the key prop, which is the refreshComp from the parent
-      key(newValue, oldValue) {
-          if (newValue !== oldValue) {
-              this.fetchChartData();
-          }
+    // Watch for changes in the key prop, which is the refreshComp from the parent
+    key(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.fetchChartData();
       }
+    }
   },
   data() {
     return {
@@ -65,11 +71,11 @@ export default {
       // ],
       chartOptions: {
         scales: {
-          x: { 
+          x: {
             stacked: true,
             display: false
           },
-          y: { 
+          y: {
             stacked: true,
             display: false
           }
@@ -84,7 +90,7 @@ export default {
       //save the data to be displayed for each category
       //chartData: [],
       //use current month to filter out relevant data
-      user:null,
+      user: null,
       value1: 0,
       value2: 0,
       //monthly data used to plot % barchart
@@ -134,10 +140,9 @@ export default {
         if (docSnap.exists()) {
           const data = docSnap.data();
           let expenses = [];
-          let monthlyBudget = 0;
           const currentMonth = new Date().toISOString().slice(0, 7);
           //const currentYear = new Date().getFullYear();
-          monthlyBudget = parseFloat(data.amount);
+          const monthlyBudget = parseFloat(data.amount);
           console.log('budget is', monthlyBudget);
 
           for (let key in data) {
@@ -178,16 +183,17 @@ export default {
             colour,
             value1: value1,
             chartData: [
-              {name: "Expenses", data:{"category": value1}},
-              {name: "Remaining Budget", data:{"category": value2}}
-            ]}
-          };
+              { name: "Expenses", data: { "category": value1 } },
+              { name: "Remaining Budget", data: { "category": value2 } }
+            ]
+          }
+        };
       } catch (error) {
         console.error(`Error fetching data for category ${category}:`, error);
       }
     }
 
-    
+
   }
 }
 </script>
@@ -198,13 +204,14 @@ export default {
   justify-content: center;
 }
 
-.barplotContainer{
-  position:relative;
+.barplotContainer {
+  position: relative;
 }
 
 .label {
   display: inline-block;
-  width: 120px; /* adjust this value to your needs */
+  width: 120px;
+  /* adjust this value to your needs */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,27 +219,37 @@ export default {
   margin-left: 10px;
 }
 
+.reminder {
+  width: 500px;
+  margin: 0px;
+}
+
 .category-header {
   display: flex;
   align-items: center;
+  height: 30px;
 }
 
 .barchart-display {
-  width: 500px; 
+  width: 500px;
   margin-right: 10px;
 }
+
 .icon-expanded {
   transform: rotate(90deg);
 }
+
 .expenses-table {
   border-collapse: collapse;
   text-align: left;
   margin-left: 140px;
 }
 
-.expenses-table td, .expenses-table th {
-  padding:4px;
-  white-space: nowrap; /* This will prevent the text from breaking into the next line */
+.expenses-table td,
+.expenses-table th {
+  padding: 4px;
+  white-space: nowrap;
+  /* This will prevent the text from breaking into the next line */
 }
 
 .expenses-table th {
@@ -242,8 +259,8 @@ export default {
   background-color: #4CAF50;
   color: white;
 }
+
 .icon-expanded {
   transform: rotate(90deg);
 }
-
 </style>
