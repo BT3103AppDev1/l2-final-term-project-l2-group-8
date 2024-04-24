@@ -5,7 +5,7 @@
         <h3>Category</h3>
       </div>
       <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: red; text-align: center;">
-        Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].value1 }}%
+        Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].calculatedValue1 }}%
       </div>
       <!--loop the categories in the order of descending total expenses-->
       <div v-for="category in sortedCategories" :key="category.name">
@@ -23,7 +23,7 @@
             <h6>Please set a budget for {{ category.name }}</h6>
           </div>
           <div class="progress" v-if="!isNaN(category.value1)">
-            <span>{{ category.value1 + '%' }}</span>
+            <span>{{ category.calculatedValue1 + '%' }}</span>
           </div>
         </div>
         <!--expense table below barchart-->
@@ -164,17 +164,26 @@ export default {
           }
 
           const totalExpense = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-          const value1 = (totalExpense / monthlyBudget * 100).toFixed(2);;
-          const value2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
+          //const value1 = (totalExpense / monthlyBudget * 100).toFixed(2);;
+          //const value2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
           console.log(totalExpense);
-          console.log(value1, value2);
-          let colour = ['green', 'white'];
-          if (value1 > 50 && value1 <= 80) {
-            colour = ['orange', 'white'];
-          } else if (value1 > 80) {
-            colour = ['red', 'white'];
-          };
+          //console.log(value1, value2);
+          let calculatedValue1 = (totalExpense / monthlyBudget * 100).toFixed(2);
+          let calculatedValue2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
+
+          let value1, value2, colour;
+
+          if (calculatedValue1 > 100) {
+            colour = ['black', 'white'];
+            value1 = 100;
+            value2 = 0;
+          } else {
+            colour = calculatedValue1 > 80 ? ['red', 'white'] : calculatedValue1 > 50 ? ['orange', 'white'] : ['green', 'white'];
+            value1 = calculatedValue1;
+            value2 = calculatedValue2;
+          }
           console.log(colour);
+          console.log(value1, value2);
           return {
             name: category,
             isExpanded: false,
@@ -182,6 +191,7 @@ export default {
             totalExpense,
             colour,
             value1: value1,
+            calculatedValue1: calculatedValue1,
             chartData: [
               { name: "Expenses", data: { "category": value1 } },
               { name: "Remaining Budget", data: { "category": value2 } }
