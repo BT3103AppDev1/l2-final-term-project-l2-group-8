@@ -69,7 +69,8 @@ export default {
 
 img {
     position: relative;
-    height:4em;
+    height:2.8em;
+    margin-top:7px;
     margin-left: -0.5em;
 }
 
