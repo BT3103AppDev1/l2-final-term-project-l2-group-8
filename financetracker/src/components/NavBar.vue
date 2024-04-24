@@ -112,6 +112,6 @@ nav div {
     color: #018337;
 }
 .router-link:hover {
-  background-color: #dddddd; /* A greenish grey color */
+  color: #dddddd; /* A greenish grey color */
 }
 </style>
