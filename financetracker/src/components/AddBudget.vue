@@ -109,32 +109,6 @@ export default {
             }
         },
 
-        // async confirmAndDeleteCategory() {
-        //     if (!this.selectedCategory || this.selectedCategory === 'new') {
-        //         alert('Please select a valid category to delete.');
-        //         return;
-        //     }
-        //     if (confirm(`Are you sure you want to delete the category "${this.categories.find(cat => cat.id === this.selectedCategory).name}" and all its contents? This action cannot be undone.`)) {
-        //         const db = getFirestore(firebaseApp);
-        //         const currentMonth = new Date().toISOString().slice(0, 7);
-        //         const userEmail = this.user ? this.user.email : null;
-
-        //         if (!userEmail) {
-        //             alert("No user logged in.");
-        //             return;
-        //         }
-
-        //         const success = await this.deleteSubcollection(db, userEmail, currentMonth, this.selectedCategory);
-        //         if (success) {
-        //             this.categories = this.categories.filter(cat => cat.id !== this.selectedCategory);
-        //             this.selectedCategory = ''; // Reset selected category after deletion
-        //             alert('Category and all associated records deleted successfully.');
-        //         } else {
-        //             alert('Failed to delete category. Please try again.');
-        //         }
-        //     }
-        // },
-
         async addBudget() {
             console.log("Starting addBudget method");
             console.log("Selected Category:", this.selectedCategory);
@@ -166,13 +140,11 @@ export default {
                     const docSnap = await getDoc(categoryDocRef);
                     if (!docSnap.exists()) {
                         await setDoc(categoryDocRef, { name: this.newCategory });
-                        //this.categories.push({ id: this.newCategory, name: this.newCategory }); // Update local categories array
                         console.log("New category added to 'hello' collection:", this.newCategory);
                     }
                 }
                         const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
                         const budgetAmount = numAmount; // The numerical budget amount
-                        // const monthTimestamp = new Date().toISOString(); // Full timestamp for the current date
 
                         // Path to the category document within the user's email collection
                         const catDocRef = doc(collection(db, userEmail), categoryName);
@@ -186,9 +158,10 @@ export default {
                             expense_title: ""  
                         };
 
-                        // Add the budget document to the category subcollection
+                // Add the budget document to the category subcollection
                 await setDoc(catDocRef, budgetData, { merge: true });
                 this.closeModal();
+                this.fetchCategories();
                 alert('Budget added successfully!');
                 this.$emit("added");
             } catch (error) {

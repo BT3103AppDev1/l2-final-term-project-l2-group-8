@@ -1,6 +1,6 @@
 <template>
 
-    <body>
+    <body v-if="user">
         <div class="nav">
             <NavBar />
         </div><br><br>
@@ -22,6 +22,14 @@ import NavBar from "@/components/NavBar.vue"
 
 export default {
     name: 'App',
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.user = user;
+            }
+        })
+    },
     components: {
         AddBudget,
         AddExpense,
@@ -31,7 +39,8 @@ export default {
     },
     data() {
         return {
-            refreshComp: 0
+            refreshComp: 0,
+            user: false
         }
     },
     methods: {

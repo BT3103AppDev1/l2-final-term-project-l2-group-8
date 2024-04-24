@@ -58,9 +58,8 @@ export default {
     top: 0;
     left: -30px;
     height: 60px;
-    width: 102%;
+    width: 100%;
     margin: 0 23px;
-    z-index: 10000;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
@@ -107,6 +106,6 @@ nav div {
     color: #018337;
 }
 .router-link:hover {
-  color: #dddddd; /* A greenish grey color */
+  color: #dddddd; 
 }
 </style>

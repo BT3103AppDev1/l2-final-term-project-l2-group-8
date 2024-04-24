@@ -218,7 +218,7 @@ export default {
                 await setDoc(docRef, { [randomFieldName]: expenseField }, { merge: true });
 
                 alert(" Saving your expense for: " + this.title)
-
+                this.fetchCategories();
                 this.closeModal();
                 this.$emit("added");
             } catch (error) {

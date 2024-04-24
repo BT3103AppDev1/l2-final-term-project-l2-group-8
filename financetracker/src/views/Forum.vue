@@ -1,6 +1,6 @@
 <template>
 
-    <body>
+    <body v-if="user">
         <div>
             <NavBar />
         </div>
@@ -39,6 +39,20 @@ import NavBar from "@/components/NavBar.vue";
 
 export default {
     name: 'Forum',
+    data() {
+        return {
+            user: false
+        }
+    },
+    mounted() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.user = user;
+                //this.useremail = user.email;
+            }
+        })
+    },
     setup() {
         const post = ref({
             name: "", 
