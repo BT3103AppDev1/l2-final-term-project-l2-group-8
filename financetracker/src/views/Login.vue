@@ -43,8 +43,8 @@ const signIn = async (event) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         console.log("Sign-in successful, navigating to /forum");
-        await router.push("/forum");
-        console.log("Navigation to /forum successful");
+        await router.push("/home");
+        console.log("Navigation to /home successful");
     } catch (error) {
         console.error("Sign-in failed:", error);
         // Alert the error message only if it is not about a page navigation cancellation
