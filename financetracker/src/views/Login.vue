@@ -49,7 +49,7 @@ const signIn = async (event) => {
         console.error("Sign-in failed:", error);
         // Alert the error message only if it is not about a page navigation cancellation
         if (error.message !== "NavigationDuplicated: Avoided redundant navigation to current location: \"/forum\".") {
-            alert(error.message);
+            alert("Failed to sign in! Please check your email and password!");
         }
     }
 };
