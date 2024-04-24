@@ -9,25 +9,30 @@
                     <!--1. category: drop down menu options-->
                     <label for="category">Category:</label>
                     <select v-model="selectedCategory">
-                        <option disabled value = "" selected>Select a category</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+                        <option disabled value="" selected>Select a category</option>
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name
+                            }}</option>
                         <option value="new">Add a new category</option>
                     </select>
                 </div>
-                <!--customise new category-->
+                <!--Create and customise new category-->
                 <div v-if="selectedCategory === 'new'" id="newCategory" class="formli">
                     <label for="newCategory">New Category:</label>
                     <input type="text" v-model="newCategory" placeholder="Enter new category name">
-                    <!-- Warning message for new category -->
                 </div>
                 <div>
-                    <span v-if="newCategory && !isValidNewCategory" class="warning">New category name must be less than 20 characters and contain only letters, numbers, and spaces.</span>
+                    <!-- Warning message for invalid category -->
+                    <span v-if="newCategory && !isValidNewCategory" class="warning">New category name must be less than
+                        20 characters and contain only letters, numbers, and spaces.</span>
                 </div>
                 <div class="formli">
                     <!--2. Title-->
                     <label for="title">Title:</label>
                     <input type="text" v-model="title" placeholder="Enter expense title name" @input="formatTitle">
-                    <span v-if="!isValidTitle" class="warning">Title must be less than 100 characters</span>
+                </div>
+                <div>
+                    <!-- Warning message for invalid title -->
+                    <span v-if="!isValidTitle" class="warning">Title must be less than 20 characters</span>
                 </div>
                 <div class="formli">
                     <!--3. Amount-->
@@ -35,6 +40,7 @@
                     <input type="text" v-model="amount" placeholder="00.00" @input="formatAmount">
                 </div>
                 <div>
+                    <!-- Warning message for invalid amount -->
                     <span v-if="!isValidAmount" class="warning">Expense must be between 0 and 1,000,000.</span>
                 </div>
                 <div class="formli">
@@ -114,12 +120,11 @@ export default {
             return !this.newCategory || (this.newCategory.length <= 20 && /^[a-zA-Z0-9 ]+$/.test(this.newCategory));
         },
         isValidTitle() {
-            return !this.title || this.title.length <= 100;
+            return !this.title || this.title.length <= 20;
         },
         isValidAmount() {
             const numAmount = parseFloat(this.amount);
             return this.amount && !isNaN(numAmount) && numAmount >= 0 && numAmount <= 1000000;
-            // return !this.amount || (this.amount >= 0 && this.amount <= 1000000);
         },
         selectedMonth() {// Extract month from selectedTime
             return this.selectedTime.split('-')[1];

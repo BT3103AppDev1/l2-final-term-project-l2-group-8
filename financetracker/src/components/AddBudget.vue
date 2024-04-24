@@ -1,31 +1,42 @@
 <template>
     <div>
-        <!-- modal content -->
         <button id="createBudget" @click="showModal = true">Add Budget</button>
         <div v-if="showModal" class="modal">
+            <!-- modal content -->
             <form class="modal-content">
                 <span @click="closeModal" class="close">&times;</span><br>
-                <!-- Dropdown for selecting or adding a new category -->
-                <label for="category">Category:</label>
-                <select v-model="selectedCategory">
-                    <option disabled value = "" selected>Select a category</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
-                    </option>
-                    <option value="new">Add a new budget category</option>
-                </select>
-                <!-- Button to delete the selected category, visible only if a valid category is selected -->
-                <!-- <button v-if="selectedCategory && selectedCategory !== 'new'" @click="confirmAndDeleteCategory">Delete Selected Category</button> -->
-
+                <!-- 1. Dropdown for selecting or adding a new category -->
+                <div class="formli">
+                    <label for="category">Category:</label>
+                    <select v-model="selectedCategory">
+                        <option disabled value="" selected>Select a category</option>
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name
+                            }}
+                        </option>
+                        <option value="new">Add a new budget category</option>
+                    </select>
+                </div>
                 <!-- Conditional input for new category with validation message -->
-                <div v-if="selectedCategory === 'new'" id="newCategory">
+                <div v-if="selectedCategory === 'new'" id="newCategory" class="formli">
                     <label for="newCategory">New Category:</label>
                     <input type="text" v-model="newCategory" placeholder="Enter new category name">
-                    <span v-if="newCategory && !isValidNewCategory" class="warning">New category name must be less than 20 characters and contain only letters, numbers, and spaces.</span>
-                </div><br><br>
-
-                <label for="amount">Amount:</label>
-                <input type="text" v-model="amount" @input="formatAmount">
-                <span v-if="!isValidAmount" class="warning">Budget amount must be between 0 and 1,000,000.</span><br><br>
+                </div>
+                <div>
+                    <!-- Warning message for invalid category -->
+                    <span v-if="newCategory && !isValidNewCategory" class="warning">New category name must be less
+                        than
+                        20 characters and contain only letters, numbers, and spaces.</span>
+                </div>
+                <!--2. Amount-->
+                <div class="formli">
+                    <label for="amount">Amount:</label>
+                    <input type="text" v-model="amount" @input="formatAmount">
+                </div>
+                <div>
+                    <!-- Warning message for invalid amount -->
+                    <span v-if="!isValidAmount" class="warning">Budget amount must be between 0 and
+                        1,000,000.</span><br><br>
+                </div>
                 <button id="addBudget" @click.prevent="addBudget">Add</button>
             </form>
         </div>
@@ -50,43 +61,46 @@ export default {
         };
     }, 
     mounted() {
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            this.user = user;
-            const db = getFirestore(firebaseApp);
-            const userEmailList = `${user.email}list`; // Collection name based on user's email
-            const collectionRef = collection(db, userEmailList);
-            const categories = [
-                "Food",
-                "Transport",
-                "Utilities",
-                "Housing",
-                "Fashion",
-                "Entertainment",
-                "Communication",
-                "Gifts",
-                "Health",
-                "Pets",
-                "Grocery",
-                "Education",
-                "Others"
-            ];
+        // Add event listener to close modal when clicking outside of it
+        document.body.addEventListener('click', this.handleClickOutside);
+        const auth = getAuth();
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                this.user = user;
+                const db = getFirestore(firebaseApp);
+                const userEmailList = `${user.email}list`; // Collection name based on user's email
+                const collectionRef = collection(db, userEmailList);
+                const categories = [
+                    "Food",
+                    "Transport",
+                    "Utilities",
+                    "Housing",
+                    "Fashion",
+                    "Entertainment",
+                    "Communication",
+                    "Gifts",
+                    "Health",
+                    "Pets",
+                    "Grocery",
+                    "Education",
+                    "Others"
+                ];
 
-            categories.forEach(async (category) => {
-                const docRef = doc(collectionRef, category);
-                try {
-                    await setDoc(docRef, { name: category });
-                    console.log(`${category} document created successfully.`);
-                } catch (error) {
-                    console.error(`Error creating ${category} document:`, error);
-                }
-            });
-            this.fetchCategories();         
-        } 
-    });
-},
+                categories.forEach(async (category) => {
+                    const docRef = doc(collectionRef, category);
+                    try {
+                        await setDoc(docRef, { name: category });
+                        console.log(`${category} document created successfully.`);
+                    } catch (error) {
+                        console.error(`Error creating ${category} document:`, error);
+                    }
+                });
+                this.fetchCategories();         
+            } 
+        });
+    },
     methods: {
+        // Method to fetch user's stored category list from firebase
         async fetchCategories() {
             if (!this.user || !this.user.email) {
                 console.error("User or user email is undefined.");
@@ -109,6 +123,18 @@ export default {
             }
         },
 
+        // Method to handle clicks outside the modal
+        handleClickOutside(event) {
+            const modal = document.querySelector('.modal');
+            if (modal && !modal.contains(event.target)) {
+                const createBudgetButton = document.getElementById('createBudget');
+                // Check if the click target is outside the modal and not the button
+                if (event.target !== createBudgetButton) {
+                    this.closeModal();
+                }
+            }
+        },
+        // Method to handle submission of new budget
         async addBudget() {
             console.log("Starting addBudget method");
             console.log("Selected Category:", this.selectedCategory);
@@ -194,8 +220,11 @@ export default {
             this.amount = value;
         }
     },
+    beforeUnmount() {
+        // Remove event listener when component is unmounted
+        document.body.removeEventListener('click', this.handleClickOutside);
+    },
     computed: {
-        // Existing computed properties...
         isValidNewCategory() {
             return !this.newCategory || (this.newCategory.length <= 20 && /^[a-zA-Z0-9 ]+$/.test(this.newCategory));
         },
@@ -241,31 +270,31 @@ export default {
     cursor: pointer;
 }
 
-.form-group {
+/*.form-group {
     margin-bottom: 20px;
+}*/
+
+.formli {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px
 }
 
-label {
-    display: inline-block;
-    /* margin-bottom: 0em; */
-    margin-right: 1em;
+.formli label {
+    width: 120px;
+    text-align: right;
+    margin-right: 10px;
 }
 
-label {
-    /* margin-bottom: 5px; */
-    text-align: center;
-}
-label[for="amount"] {
-    margin-left: 1.2em;
-    margin-right: 1.5em;
-}
-
-select,
-input[type="number"],
-input[type="text"] {
-    width: 60%;
+.formli select,
+.formli input[type="number"],
+.formli input[type="text"] {
+    flex: 1;
     padding: 10px;
     font-size: 16px;
+}
+.save {
+    text-align: center;
 }
 
 button {
@@ -285,7 +314,7 @@ button:hover {
 
 #createBudget {
     float: inline-end;
-    margin-inline-end: 2%;
+    margin-inline-end: 20px;
 }
 
 #addBudget {
@@ -293,21 +322,11 @@ button:hover {
     margin: 0 auto;
 }
 
-#newCategory {
-    display: flex;
-    align-items: center;
-    margin-top: 1em;
-}
-
-#newCategory label {
-    margin-right: 0em;
-    /* margin-bottom: 0; */
-}
-
 .warning {
     color: red;
-    margin: 0 auto;
     font-size: small;
-    display: inline-flex;
+    display: block;
+    margin-top: 0.5em;
+    text-align: center;
 }
 </style>
