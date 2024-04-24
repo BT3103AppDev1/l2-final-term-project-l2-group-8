@@ -4,6 +4,9 @@
   <div>
     <h3>Category</h3>
   </div>
+  <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: red; text-align: center;">
+      Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].value1 }}%
+  </div>
   <!--loop the categories in the order of descending total expenses-->
   <div v-for="category in sortedCategories" :key="category.name">
     <div class="category-header">
@@ -12,11 +15,13 @@
       <div class="label">
       <span>{{ category.name }}</span>
       </div>
-      <div class="barchart-display">
-        <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true" :library="chartOptions" height="12px"></bar-chart>
-
+      <div class="barchart-display" v-if="!isNaN(category.value1)">
+        <bar-chart :data="category.chartData" :colors="category.colour" :stacked="true" :horizontal="true" :library="chartOptions" height="13px"></bar-chart>
       </div>
-      <div class="progress">
+      <div class="reminder" v-if="isNaN(category.value1)">
+          <h6>Please set a budget for {{ category.name }}</h6>
+        </div>
+      <div class="progress" v-if="!isNaN(category.value1)">
       <span>{{ category.value1 + '%'}}</span>
       </div>
     </div>
@@ -134,10 +139,9 @@ export default {
         if (docSnap.exists()) {
           const data = docSnap.data();
           let expenses = [];
-          let monthlyBudget = 0;
           const currentMonth = new Date().toISOString().slice(0, 7);
           //const currentYear = new Date().getFullYear();
-          monthlyBudget = parseFloat(data.amount);
+          const monthlyBudget = parseFloat(data.amount);
           console.log('budget is', monthlyBudget);
 
           for (let key in data) {
@@ -211,10 +215,15 @@ export default {
   text-align: left;
   margin-left: 10px;
 }
+.reminder {
+  width: 500px; 
+  margin: 0px;
+}
 
 .category-header {
   display: flex;
   align-items: center;
+  height: 30px;
 }
 
 .barchart-display {
@@ -245,5 +254,6 @@ export default {
 .icon-expanded {
   transform: rotate(90deg);
 }
+
 
 </style>
