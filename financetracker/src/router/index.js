@@ -4,6 +4,7 @@ import Login from '../views/Login.vue';
 import Forum from '../views/Forum.vue';
 import Resetpass from '@/views/Resetpass.vue';
 import Home from '@/views/Home.vue';
+import NotFound from '@/views/NotFound.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -32,7 +33,12 @@ const router = createRouter({
         path: "/home",
         name: "home",
         component: Home
-      }
+      },
+      {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: NotFound,
+    }
     ]
 })
 
