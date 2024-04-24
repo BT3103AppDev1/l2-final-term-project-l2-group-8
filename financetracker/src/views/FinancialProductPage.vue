@@ -65,6 +65,7 @@ export default {
         }
     },
     computed: {
+        // organises a list of products into rows of two 
         productRows() {
             const rows = [];
             for (let i = 0; i < this.products.length; i += 2) {

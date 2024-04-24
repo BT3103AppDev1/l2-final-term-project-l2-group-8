@@ -205,7 +205,6 @@ export default {
                     const docSnap = await getDoc(categoryDocRef);
                     if (!docSnap.exists()) {
                         await setDoc(categoryDocRef, { name: this.newCategory });
-                        //this.categories.push({ id: this.newCategory, name: this.newCategory }); // Update local categories array
                         console.log("New category added to 'hello' collection:", this.newCategory);
                     }
                 }
@@ -223,6 +222,7 @@ export default {
                 await setDoc(docRef, { [randomFieldName]: expenseField }, { merge: true });
 
                 alert(" Saving your expense for: " + this.title)
+                // update category list
                 this.fetchCategories();
                 this.closeModal();
                 this.$emit("added");

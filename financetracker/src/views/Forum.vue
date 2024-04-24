@@ -19,13 +19,7 @@
                 <p>{{ post.text }}</p>
                 <button @click="like(index)" :class="{ liked: post.liked }">👍 {{ post.likes }}</button>
                 <button @click="dislike(index)" :class="{ disliked: post.disliked }">👎 {{ post.dislikes }}</button>
-                <!-- <button @click="toggleComment(index)">Comment</button> -->
-                <!-- <div v-if="post.showComment">
-                    <textarea id="comment" v-model="newComment" placeholder="Write a comment"></textarea>
-                    <button @click="addComment(index)">Comment</button>
-                </div> -->
             </div>
-            <!-- <LogOut/> -->
         </div>
     </body>
 </template>
@@ -49,11 +43,11 @@ export default {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 this.user = user;
-                //this.useremail = user.email;
             }
         })
     },
     setup() {
+        // A reactive reference for the current post being created or edited.
         const post = ref({
             name: "", 
             title: "",
@@ -65,14 +59,16 @@ export default {
             comments: [], 
             showComment: false
         });
-        const posts = ref([]);
+        const posts = ref([]);// A reactive array to store posts fetched from the database.
 
+        // Asynchronously loads posts from the database and updates the posts array.
         const loadPosts = async () => {
             const db = getFirestore(firebaseApp);
             const querySnapshot = await getDocs(collection(db, "posts"));
             posts.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         };
 
+        // Fetches posts when the component is mounted and a user is logged in.
         onMounted(() => {
             const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
@@ -84,6 +80,7 @@ export default {
             });
         });
 
+        // Handles the posting of a new post to the database.
         const upload = async () => {
             if (post.value.text.trim() !== "") {
                 const db = getFirestore(firebaseApp);
@@ -103,6 +100,7 @@ export default {
             }
         };
 
+        // Resets the post form to its initial empty state.
         const resetPost = () => {
             post.value = {
                 name: "",
@@ -117,7 +115,7 @@ export default {
             };
         };
 
-
+        // Updates the like count and status of a post.
         const like = async (index) => {
             const db = getFirestore(firebaseApp);
             const currentPost = posts.value[index];
@@ -146,6 +144,7 @@ export default {
             }
         };
 
+        // Updates the dislike count and status of a post.
         const dislike = async (index) => {
             const db = getFirestore(firebaseApp);
             const currentPost = posts.value[index];
@@ -188,7 +187,7 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 body {
-    background: linear-gradient(to right top, #008080, #bab86c);
+    /* background: linear-gradient(to right top, #008080, #bab86c); */
     background-size:cover;
     min-height: 100vh;
     display: flex;
@@ -197,7 +196,6 @@ body {
     height:100%;
 }
 #container {
-    /* margin: 30px; */
     width: 60%;
     background-color: #ffffff77;
     border-radius: 20px;

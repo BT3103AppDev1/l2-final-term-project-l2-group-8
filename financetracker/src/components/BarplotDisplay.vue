@@ -2,15 +2,18 @@
   <div class='parent'>
     <div class="barplotContainer">
       <div class="header">
-        <h3>Category</h3>
+        <h3 style="color: ivory;">Expense Details by Category</h3>
       </div>
-      <div v-if="sortedCategories[0] && sortedCategories[0].value1 > 80" style="color: #b30900; text-align: center;">
-        Alert: {{ sortedCategories[0].name }} expenses has reached {{ sortedCategories[0].calculatedValue1 }}%
+      <!--loop over the categories in the order of descending total expenses-->
+      <div v-for="category in sortedCategories" :key="category.name">
+      <!-- Alert if the expense has exceeded 80% of the budget -->
+        <div v-if="category.value1 > 80" style="color: #b30900; text-align: center;">
+          Alert: {{ category.name }} expenses has reached {{ category.calculatedValue1 }}%
+        </div>
       </div>
-      <!--loop the categories in the order of descending total expenses-->
       <div v-for="category in sortedCategories" :key="category.name">
         <div class="category-header">
-          <!--▶ category name: barplot-->
+          <!-- category name: barplot-->
           <span :class="{ 'icon-expanded': category.isExpanded }" @click="toggleExpand(category)">▶</span>
           <div class="label">
             <span>{{ category.name }}</span>
@@ -64,11 +67,6 @@ export default {
   },
   data() {
     return {
-      // chartData2: [
-      //   {name: "Category 1", data: {"Segment 1": 20, "Segment 2": 30}},
-      //   {name: "Category 2", data: {"Segment 1": 50, "Segment 2": 10}},
-      //   {name: "Category 3", data: {"Segment 1": 30, "Segment 2": 40}}
-      // ],
       chartOptions: {
         scales: {
           x: {
@@ -87,8 +85,7 @@ export default {
       },
       //save a list of category objects constructed by fetchCategoryData()
       categories: [],
-      //save the data to be displayed for each category
-      //chartData: [],
+
       //use current month to filter out relevant data
       user: null,
       value1: 0,
@@ -101,8 +98,12 @@ export default {
   computed: {
     //sort the categories in the order of descending total expenses
     sortedCategories() {
-      const sorted = this.categories.sort((a, b) => b.totalExpense - a.totalExpense);
-      return sorted;
+      return this.categories.sort((a, b) => {
+        // Handle potential undefined or null values
+        const valueA = a.calculatedValue1 || 0;
+        const valueB = b.calculatedValue1 || 0;
+        return valueB - valueA;
+      });
     }
   },
   mounted() {
@@ -111,7 +112,6 @@ export default {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         this.user = user;
-        //
         const categoriesRef = collection(db, this.user.email)
         //fetching all the docs from the user's collection
         const snapshot = await getDocs(categoriesRef)
@@ -126,10 +126,11 @@ export default {
   },
 
   methods: {
-    //
+    //Handle toggle expansion
     toggleExpand(category) {
       category.isExpanded = !category.isExpanded;
     },
+    //Fetch user's stored category lists
     async fetchCategoryData(category) {
       try {
         //reference build to this specific category
@@ -141,10 +142,10 @@ export default {
           const data = docSnap.data();
           let expenses = [];
           const currentMonth = new Date().toISOString().slice(0, 7);
-          //const currentYear = new Date().getFullYear();
           const monthlyBudget = parseFloat(data.amount);
           console.log('budget is', monthlyBudget);
 
+          //loop over the keys in document get all expenses
           for (let key in data) {
             if (key.startsWith('field_')) {
               const expenseData = data[key];
@@ -164,10 +165,7 @@ export default {
           }
 
           const totalExpense = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-          //const value1 = (totalExpense / monthlyBudget * 100).toFixed(2);;
-          //const value2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
           console.log(totalExpense);
-          //console.log(value1, value2);
           let calculatedValue1 = (totalExpense / monthlyBudget * 100).toFixed(2);
           let calculatedValue2 = ((monthlyBudget - totalExpense) / monthlyBudget * 100).toFixed(2);
 
@@ -178,7 +176,7 @@ export default {
             value1 = 100;
             value2 = 0;
           } else {
-            colour = calculatedValue1 > 80 ? ['red', 'ivory'] : calculatedValue1 > 50 ? ['orange', 'ivory'] : ['green', 'ivory'];
+            colour = calculatedValue1 > 80 ? ['maroon', 'ivory'] : calculatedValue1 > 50 ? ['goldenrod', 'ivory'] : ['seagreen', 'ivory'];
             value1 = calculatedValue1;
             value2 = calculatedValue2;
           }
@@ -222,7 +220,6 @@ export default {
 .label {
   display: inline-block;
   width: 120px;
-  /* adjust this value to your needs */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -260,7 +257,7 @@ export default {
 .expenses-table th {
   padding: 4px;
   white-space: nowrap;
-  /* This will prevent the text from breaking into the next line */
+  /* prevent the text from breaking into the next line */
 }
 
 .expenses-table th {

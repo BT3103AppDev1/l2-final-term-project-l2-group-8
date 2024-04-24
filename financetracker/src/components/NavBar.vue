@@ -54,7 +54,6 @@ export default {
 
 #container {
     background-color: #f6f3e7;
-    /* #f1f9ec; */
     position: fixed;
     z-index: 1000;
     top: 0;

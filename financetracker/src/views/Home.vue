@@ -4,6 +4,7 @@
         <div class="nav">
             <NavBar />
         </div><br><br>
+        <h2 style="text-align: center; color:ivory;">Expense Summary</h2>
         <AddBudget @added="change" />
         <AddExpense @added="change" /><br><br>
         <DonutChartSummary :key="refreshComp" />

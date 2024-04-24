@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { getFirestore, collection, query, getDocs, setDoc, doc, deleteDoc, writeBatch,getDoc, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, setDoc, doc,getDoc } from 'firebase/firestore';
 import firebaseApp from '../firebase.js';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -169,26 +169,28 @@ export default {
                         console.log("New category added to 'hello' collection:", this.newCategory);
                     }
                 }
-                        const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
-                        const budgetAmount = numAmount; // The numerical budget amount
+                const categoryName = this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory; // The category name
+                const budgetAmount = numAmount; // The numerical budget amount
 
-                        // Path to the category document within the user's email collection
-                        const catDocRef = doc(collection(db, userEmail), categoryName);
+                // Path to the category document within the user's email collection
+                const catDocRef = doc(collection(db, userEmail), categoryName);
 
-                        // Prepare the budget data with the amount and timestamp
-                        const budgetData = {
-                            Date: new Date().toISOString(),
-                            amount: budgetAmount,
-                            budget: true,
-                            expense: false,
-                            expense_title: ""  
-                        };
+                // Prepare the budget data with the amount and timestamp
+                const budgetData = {
+                    Date: new Date().toISOString(),
+                    amount: budgetAmount,
+                    budget: true,
+                    expense: false,
+                       expense_title: ""  
+                };
 
                 // Add the budget document to the category subcollection
                 await setDoc(catDocRef, budgetData, { merge: true });
                 this.closeModal();
+                // update category list
                 this.fetchCategories();
-                alert('Budget added successfully!');
+                console.log(categoryName)
+                alert('Saving your budget for: '+ categoryName);
                 this.$emit("added");
             } catch (error) {
                 console.error('Error adding budget or category: ', error);

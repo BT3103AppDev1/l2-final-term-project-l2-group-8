@@ -1,9 +1,11 @@
 <template>
     <div class="chart-container">
         <div class="summary-text">
+            <!-- numerical summaries of total budget and expense -->
             <div class="total-budget">Total Budget: ${{ totalBudget.toFixed(2) }}</div><br>
             <div class="total-expense">Total Expense: ${{ totalExpense.toFixed(2) }} </div>
         </div>
+        <!-- doughnut chart summary of all expenses -->
         <pie-chart :donut="true" :data="chartData" legend="bottom" prefix="$" loading="Loading..." height="70vh"
             :colors="['#E9E4BF', '#B6AD90', '#AC855E', '#C0C7AB', '#f6f3e7', '#ABC09F', '#bc987e', '#E1DACA', '#D5ADA4', '#008080', '#676B6E', '#E3D7BD',  
              ]" :library="{
@@ -61,7 +63,7 @@ export default {
         });
     },
     methods: {
-        // fetch user data from firebase for doughnut chart and number summaries
+        // fetch user data from firebase for doughnut chart and numeric summaries
         async fetchChartData() {
             try {
                 const snapshot = await getDocs(collection(db, String(this.user.email)));
@@ -113,8 +115,6 @@ export default {
     .chart-container {
         position: relative;
         width: 100%;
-        /* pointer-events: "hover"; */
-        /* height: 500px; */
     }
     
     .summary-text {

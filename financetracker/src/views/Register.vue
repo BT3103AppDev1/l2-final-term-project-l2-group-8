@@ -43,7 +43,7 @@ const register = async (event) => {
         // This will now only be called when the user clicks the "Register" button
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
-        router.push('/forum');
+        router.push('/home');
     } catch (error) {
         alert("Failed to register! Please check your email and password!");
         console.log(error.code);
