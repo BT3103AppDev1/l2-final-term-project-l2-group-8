@@ -5,10 +5,13 @@
             <img src="" alt="logo">
             <button id="btn" @click="signOut()"> Logout </button>
             <nav>
-                <router-link to="/home" class="router-link" active-class="router-link-active">Home</router-link> |
-                <router-link to="/forum" class="router-link" active-class="router-link-active">Forum</router-link> |
-                <router-link to="/products" class="router-link" active-class="router-link-active">Finance
-                    Products</router-link>
+                <div>
+                <router-link to="/home" class="router-link" active-class="router-link-active">Home</router-link>
+                </div>
+                <div><router-link to="/forum" class="router-link" active-class="router-link-active">Forum</router-link>
+                </div>
+                <div><router-link to="/products" class="router-link" active-class="router-link-active">Financial Products</router-link>
+                </div>
             </nav>
 
         </div>
@@ -48,45 +51,67 @@ export default {
 </script>
 
 <style scoped>
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 #container {
-    background-color: #fffffffb;
-    position: fixed;
+    background-color: #f1f9ec;
+    position: absolute;
     top: 0;
-    left: -20px;
-    height: 60px;
+    left: -30px;
+    height: 55px;
     width: 102%;
     margin: 0 23px;
     z-index: 10000;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
 }
+
 img {
     position: absolute;
     bottom: 20px;
-    left: 50px;
+    left: 20px;
 }
+
 nav {
-    display: inline-block;
+    display: flex;
     position: absolute;
-    left: 43%;
+    justify-content: space-between;
+    width: 25%;
+    left: 65%;
     bottom: 20px;
 }
+nav div {
+  text-align: center;
+}
+
 #btn {
     background-color: #dddddd;
     border: none;
     height: 40px;
     width: 80px;
-    border-radius: 40px;
+    border-radius: 5px;
     font-size: 15px;
     position: absolute;
-    right: 50px;
+    left: 80px;
     bottom: 10px;
 }
 #btn:hover{
     background-color: #aaaaaa;
 }
 .router-link {
-    color: #000000;
+  color: #000;
+  text-decoration: none;
+  display: block;
 }
 .router-link-active {
     color: #018337;
+}
+.router-link:hover {
+  background-color: #dddddd; /* A greenish grey color */
 }
 </style>
