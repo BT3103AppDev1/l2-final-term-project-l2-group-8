@@ -1,52 +1,71 @@
 <template>
-    <body>
-        <div id="container">
-            <ProductCard v-for="product in products" :key="product.sku" :product="product" />
-        </div>
+    <body>     
+        <div class="container">
+            <div class="header">
+                    <p>Finance Tracker - Financial Products</p>
+            </div>
+            <div class="product-grid">
+                <div class="product-row" v-for="(row, rowIndex) in productRows" :key="rowIndex">
+                    <div v-for="(product, columnIndex) in row" :key="columnIndex" class="product-cell">
+                        <ProductCard :product="product" />
+                    </div>
+                </div>
+            </div>
+        </div>  
     </body>
 </template>
 
 <script>
-import ProductCard from "../components/Product.vue"
+import ProductCard from "@/component/Product.vue"
+import img1 from '@/assets/1_photo.jpg'
+import img2 from '@/assets/2_photo.jpg'
+import img3 from '@/assets/3_photo.jpg'
+import img4 from '@/assets/4_photo.jpg'
 export default {
-    name: 'Forum',
+    name: 'product',
     components: {
         ProductCard
     },
     data() {
         return {
             products: [{
-                name: 'Product 1',
-                description: 'This is the description of Product 1',
-                price: 19.99,
-                sku: 'SKU001',
-                category: 'Category 1'
+                id: 1,
+                image: img1,
+                name: 'Currency Linked Investments',
+                description: 'Potential to earn enhanced yields through Currency Linked Investments.',
+                url: 'https://www.dbs.com.sg/treasures/investments/fx-and-cash-management/currency-linked-investments'
             },
             {
-                name: 'Product 2',
-                description: 'This is the description of Product 2',
-                price: 29.99,
-                sku: 'SKU001',
-                category: 'Category 1'
+                id: 2,
+                image: img2,
+                name: 'Equity Linked Notes',
+                description: 'Structured notes linked to shares, tailor-made to your risk profile and market views.',
+                url: 'https://www.dbs.com.sg/treasures/investments/product-suite/equities/equity-linked-investments'
             },
             {
-                name: 'Product 3',
-                description: 'This is the description of Product 3',
-                price: 39.99,
-                sku: 'SKU001',
-                category: 'Category 1'
+                id: 3,
+                image: img3,
+                name: 'Reverse Equity Linked Notes',
+                description: 'Enhance returns from stocks when your view of the market is stable or mildly bearish.',
+                url: 'https://www.dbs.com.sg/treasures/investments/product-suite/structured-investments/reverse-equity-linked-notes'
+            },
+            {
+                id: 4,
+                image: img4,
+                name: 'Fixed Coupon Notes',
+                description: 'Equity-based structured notes that provide regular coupons regardless of market conditions.',
+                url: 'https://www.dbs.com.sg/treasures/investments/product-suite/structured-investments/fixed-coupon-notes'
             }
-            ]          
+            ]
         }
     },
-    created() {
-        this.posts = JSON.parse(localStorage.getItem('savedData')) || [];
-    },
-    methods: {
-        upload() {
-            this.posts.push(this.post);
-            localStorage.setItem('savedData', JSON.stringify(this.posts));
-            this.post = {name: "", title:"", text:""};
+    computed: {
+        productRows() {
+            const rows = [];
+            for (let i = 0; i < this.products.length; i += 2) {
+                rows.push(this.products.slice(i, i + 2));
+            }
+            return rows;
         }
     }
 }
@@ -54,59 +73,47 @@ export default {
 
 <style scoped>
 body {
-    background: linear-gradient(to right top, #49eded, #95d52d);
-    background-size: cover;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  min-width: 1240px;
+}
+
+.header {
+  background-color: #92a579; 
+  color: #FFFFFF; 
+  text-align:center;
+  /* border: 1px solid red; */
+  min-height:80px;
+  width:1240px;
+  margin: 0;
+}
+
+p {
+    font-size:60px;
     margin: 0;
 }
-#container {
-    margin: 30px;
-    width: 60%;
-    background-color: #ffffff77;
-    border-radius: 20px;
+
+.container {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  min-height: 100vh;
+  min-width: 1240px;
 }
-#add-a-post {
-    margin: 20px;
-    background-color: #ffffff;
-    text-align: center;
-    border-radius: 20px;
-    padding: 10px;
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
 }
-textarea {
-    border: none;
-    outline: none;
-    background-color: #ffffff;
-    resize: none;
-    height: 30px;
-    width: 98%;
-}
-#text {
-    height: 200px;
-}
-.view-posts {
-    margin: 20px;
-    background-color: #ffffff;
-    border-radius: 20px;
-    display: inline-block;
-    padding: 10px;
-}
-button {
-    background-color: #dddddd;
-    border: none;
-    height: 40px;
-    width: 80px;
-    border-radius: 40px;
-    font-size: 15px;
-    margin: 0 auto;
-}
-button:hover {
-    background-color: #aaaaaa;
-}
-p {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: break-all;
+
+.product-cell {
+  width: 100%;
+  background-color: #e3e4d4;
 }
 </style>

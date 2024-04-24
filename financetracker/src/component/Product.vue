@@ -1,24 +1,23 @@
 <template>
   <div class="product-card">
-    <!-- /*<img :src="product.image" :alt="product.name" class="product-image"> -->
+    <div class="product-image-container">
+      <img :src="product.image" class="product-image">
+    </div>
     <div class="product-details">
-      <h3 class="product-name">{{ product.name }}</h3>
-      <p class="product-description">{{ product.description }}</p>
-      <p class="product-price">$ {{ product.price }}</p>
-      <button class="view-more-button" @click="showDetails = !showDetails">
-        {{ showDetails ? 'Hide Details' : 'View Details' }}
-      </button>
-      <div v-if="showDetails" class="more-details">
-        <p>SKU: {{ product.sku }}</p>
-        <p>Category: {{ product.category }}</p>
+      <div class="vertical-text">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
       </div>
+      <a :href="product.url" class="view-more-button" >
+        View Details
+      </a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name:"ProductCard",
+  name: "ProductCard",
   props: {
     product: {
       type: Object,
@@ -29,29 +28,42 @@ export default {
     return {
       showDetails: false
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
 .product-card {
-  display: flex;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 20px;
 }
 
-.product-image {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 5px;
+.product-image-container {
+  display: flex;
   margin-right: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image {
+  width: 320px;
+  height: 320px;
+  border-radius: 5px;
 }
 
 .product-details {
   flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column; 
+}
+
+.vertical-text {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .product-name {
@@ -70,7 +82,7 @@ export default {
 
 .view-more-button {
   padding: 5px 10px;
-  background-color: #007bff;
+  background-color: #92a579;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -80,4 +92,5 @@ export default {
 .more-details {
   margin-top: 10px;
 }
+
 </style>
