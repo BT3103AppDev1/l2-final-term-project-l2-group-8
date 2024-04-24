@@ -2,8 +2,10 @@
     <body><router-view/></body>  
 </template>
 
-<script setup>
-
+<script>
+export default {
+  name: 'App',
+}
 </script>
 
 <style scoped>
@@ -13,6 +15,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    margin-top: 60px; /*30px*/
+}
+
+body {
+  background-color: #a9ba9d;
 }
 </style>
