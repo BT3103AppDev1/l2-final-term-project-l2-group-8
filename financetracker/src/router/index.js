@@ -3,6 +3,7 @@ import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Forum from '../views/Forum.vue';
 import Resetpass from '@/views/Resetpass.vue';
+import Home from '@/views/Home.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -26,6 +27,11 @@ const router = createRouter({
         path: "/resetpass",
         name: "resetpass",
         component: Resetpass
+      },
+      {
+        path: "/home",
+        name: "home",
+        component: Home
       }
     ]
 })

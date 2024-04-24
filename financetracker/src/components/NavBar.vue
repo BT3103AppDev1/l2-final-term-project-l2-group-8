@@ -1,14 +1,18 @@
 <template>
-    <div id="container" v-if="user">
-        <img src="" alt="logo">
-        <button id = "btn" @click="signOut()"> Logout </button>
-        <nav>
-            <router-link to="/home" class="router-link" active-class="router-link-active">Home</router-link> |
-            <router-link to="/forum" class="router-link" active-class="router-link-active">Forum</router-link> |
-            <router-link to="/products" class="router-link" active-class="router-link-active">Finance Products</router-link>
-        </nav>
-        
-    </div>
+
+    <body>
+        <div id="container" v-if="user">
+            <img src="" alt="logo">
+            <button id="btn" @click="signOut()"> Logout </button>
+            <nav>
+                <router-link to="/home" class="router-link" active-class="router-link-active">Home</router-link> |
+                <router-link to="/forum" class="router-link" active-class="router-link-active">Forum</router-link> |
+                <router-link to="/products" class="router-link" active-class="router-link-active">Finance
+                    Products</router-link>
+            </nav>
+
+        </div>
+    </body>
 </template>
 
 <script>
@@ -45,13 +49,14 @@ export default {
 
 <style scoped>
 #container {
-    background-color: #ffffffaa;
-    position: absolute;
+    background-color: #fffffffb;
+    position: fixed;
     top: 0;
     left: -20px;
     height: 60px;
-    width: 100%;
+    width: 102%;
     margin: 0 23px;
+    z-index: 10000;
 }
 img {
     position: absolute;
@@ -61,7 +66,7 @@ img {
 nav {
     display: inline-block;
     position: absolute;
-    left: 300px;
+    left: 43%;
     bottom: 20px;
 }
 #btn {

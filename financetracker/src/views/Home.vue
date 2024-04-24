@@ -1,11 +1,15 @@
 <template>
+
     <body>
+        <div class="nav">
+            <NavBar />
+        </div><br><br>
         <AddBudget @added="change" />
-            <AddExpense @added="change" /><br><br>
-        <DonutChartSummary :key="refreshComp"  /><br><br>
-            <div class="barplotContainer">
-                <BarplotDisplay :key="refreshComp" />
-            </div>
+        <AddExpense @added="change" /><br><br>
+        <DonutChartSummary :key="refreshComp" /><br><br>
+        <div class="barplotContainer">
+            <BarplotDisplay :key="refreshComp" />
+        </div>
     </body>
 </template>
 
@@ -14,6 +18,7 @@ import AddBudget from "../components/AddBudget.vue"
 import AddExpense from "../components/AddExpense.vue"
 import BarplotDisplay from '../components/BarplotDisplay.vue'
 import DonutChartSummary from "@/components/DonutChartSummary.vue"
+import NavBar from "@/components/NavBar.vue"
 
 export default {
     name: 'App',
@@ -21,7 +26,8 @@ export default {
         AddBudget,
         AddExpense,
         BarplotDisplay,
-        DonutChartSummary
+        DonutChartSummary,
+        NavBar
     },
     data() {
         return {
@@ -35,3 +41,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+body{
+    margin: -20px;
+    padding: 0;
+    }
+.nav{
+    margin-bottom: 10vh;
+}
+</style>
