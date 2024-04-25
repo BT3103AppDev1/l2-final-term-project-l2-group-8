@@ -100,8 +100,9 @@ export default {
     sortedCategories() {
       return this.categories.sort((a, b) => {
         // Handle potential undefined or null values
-        const valueA = a.calculatedValue1 || 0;
-        const valueB = b.calculatedValue1 || 0;
+        const valueA = isNaN(a.calculatedValue1) ? 0 :a.calculatedValue1;
+        const valueB = isNaN(b.calculatedValue1) ? 0 :b.calculatedValue1;
+        console.log(valueB, '-', valueA);
         return valueB - valueA;
       });
     }
@@ -143,7 +144,6 @@ export default {
           let expenses = [];
           const currentMonth = new Date().toISOString().slice(0, 7);
           const monthlyBudget = parseFloat(data.amount);
-          console.log('budget is', monthlyBudget);
 
           //loop over the keys in document get all expenses
           for (let key in data) {
@@ -159,7 +159,6 @@ export default {
                   amount: expenseData.amount
                 });
                 expenses.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
-                console.log(expenses);
               }
             }
           }
@@ -180,8 +179,7 @@ export default {
             value1 = calculatedValue1;
             value2 = calculatedValue2;
           }
-          console.log(colour);
-          console.log(value1, value2);
+          console.log(category, monthlyBudget, calculatedValue1, calculatedValue2);
           return {
             name: category,
             isExpanded: false,
