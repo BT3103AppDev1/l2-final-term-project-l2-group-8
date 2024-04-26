@@ -148,7 +148,7 @@ export default {
             }
 
             const numAmount = parseFloat(this.amount);
-            if (isNaN(numAmount) || numAmount < 0 || numAmount > 1000000) {
+            if (isNaN(numAmount) || numAmount <= 0 || numAmount > 1000000) {
                 console.log("Validation failed: Amount out of range.");
                 alert("Budget amount is out of allowed range.");
                 return;
@@ -232,7 +232,7 @@ export default {
         },
         isValidAmount() {
             const numAmount = parseFloat(this.amount);
-            return this.amount && !isNaN(numAmount) && numAmount >= 0 && numAmount <= 1000000;
+            return this.amount && !isNaN(numAmount) && numAmount > 0 && numAmount <= 1000000;
         }
     }
     

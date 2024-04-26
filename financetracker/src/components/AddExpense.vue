@@ -124,7 +124,7 @@ export default {
         },
         isValidAmount() {
             const numAmount = parseFloat(this.amount);
-            return this.amount && !isNaN(numAmount) && numAmount >= 0 && numAmount <= 1000000;
+            return this.amount && !isNaN(numAmount) && numAmount > 0 && numAmount <= 1000000;
         },
         selectedMonth() {// Extract month from selectedTime
             return this.selectedTime.split('-')[1];
@@ -172,7 +172,7 @@ export default {
             }
 
             const numAmount = parseFloat(this.amount);
-            if (isNaN(numAmount) || numAmount < 0 || numAmount > 1000000) {
+            if (isNaN(numAmount) || numAmount <= 0 || numAmount > 1000000) {
                 alert("Expense amount is out of allowed range.");
                 return;
             }
